@@ -11,13 +11,14 @@ import reducer from './reducers'
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
+require('dotenv').config();
 
 const middleware = [thunk];
 
 const store = createStore(
   reducer,
   composeWithDevTools(applyMiddleware(...middleware))
-)
+) 
 
 ReactDOM.render(
   <Provider store={store}>
