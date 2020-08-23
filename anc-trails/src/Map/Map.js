@@ -23,16 +23,14 @@ const mapParams = {
     center: [61.160149, -149.96],
     zoomControl: false,
     zoom: 11.35,
-    layers: [placesLayer, clusterLayer, tracksLayer, Stadia_AlidadeSmoothDark]
+    layers: [tracksLayer, Stadia_AlidadeSmoothDark]
 }
 
 class Map extends React.Component {
     static propTypes = {
-        lastCall: PropTypes.number,
         lastCompute: PropTypes.number,
         dbscanSettings: PropTypes.object,
         dispatch: PropTypes.func.isRequired,
-        places: PropTypes.object,
         tracks: PropTypes.array,
         accessToken: PropTypes.string
       }
@@ -45,21 +43,31 @@ class Map extends React.Component {
         this.map.on('moveend', () => {
             //dispatch(doUpdateBoundingBox(this.map.getBounds()));
         });
+        this.map.on('click', function(e) {
+            tracksLayer.setStyle({color: "green", weight: 2});
+        });
+        
+        tracksLayer.on('click', function(e) {
+            const selectedId = e.layer._leaflet_id;
 
-        //dispatch(doUpdateBoundingBox(this.map.getBounds()));
+            tracksLayer.eachLayer(function(layer) {
+                console.log("Layer: " + layer);
+                layer.setStyle({color: "green", weight: 2});
+                if (layer._leaflet_id == selectedId) {
+                    console.log("found it");
+                    layer.setStyle({color: "blue", weight: 4});
+                    layer.bringToFront();
+                }
+            })
+        });
+
         dispatch(getAccessToken());
-        //this.addTracks();
-
-        const clusterPane = this.map.createPane('clusterPane');
-        clusterPane.style.opacity = 0.9;
 
         const baseMap = {
             'Stadia Alidade Smooth Dark': Stadia_AlidadeSmoothDark
         }
 
         const overlayMaps = {
-            'Points of interest': placesLayer,
-            Clusters: clusterLayer,
             Tracks: tracksLayer
         }
 
@@ -71,13 +79,7 @@ class Map extends React.Component {
     }
 
     componentDidUpdate(prevProps) {
-        const { lastCall, accessToken, dispatch, tracks, tracksLoaded } = this.props;
-        // check if timestap is later
-        if (lastCall > prevProps.lastCall) {
-            // if so, data has been updated
-            this.addPlaces();
-            //this.addTracks();
-        }
+        const { accessToken, dispatch, tracks, tracksLoaded } = this.props;
 
         if (accessToken != "" && tracksLoaded == false) {
             dispatch(getActivities({token: accessToken}))
@@ -85,31 +87,6 @@ class Map extends React.Component {
 
         if (tracksLoaded == true && tracks != prevProps.tracks) {
             this.addTracks();
-        }
-    }
-
-    addPlaces() {
-        // clear layers
-        placesLayer.clearLayers();
-
-        const { places } = this.props;
-        let cnt = 0;
-
-        for (const place of places) {
-            if (places[place].hasOwnProperty('data') && places[place].data.length > 0) {
-                // for (const placeObj of places[place].data) {
-                //     L.circleMarker([placeObj.position[0], placeObj.position[1]], {
-                //         color: places[place].color,
-                //         orig_color: places[place].color,
-                //         radius: 5,
-                //         id: cnt,
-                //         weight: 1,
-                //         opacity: 0.5
-                //     }).addTo(placesLayer).bindTooltip(placeObj.title)
-                //     cnt += 1;
-                // }
-                console.log(place.type);
-            }
         }
     }
 
@@ -129,8 +106,10 @@ class Map extends React.Component {
                         weight: 2
                     }
                 );
-
-                const popupText = "<b>" + track.name + "</b>";
+                
+                const distance = track.distance / 1609.344;
+                const roundDistance = Math.round(distance * 100) / 100;
+                const popupText = "<b>" + track.name + "</b><br><b>Miles: " + roundDistance + "</b>"; 
                 newLine.bindPopup(popupText);
                 newLine.addTo(tracksLayer);
             }
@@ -143,10 +122,8 @@ class Map extends React.Component {
 }
 
 const mapStateToProps = state => {
-    const { places, lastCall, accessToken, tracks, tracksLoaded } = state.placesControls;
+    const { accessToken, tracks, tracksLoaded } = state.placesControls;
     return {
-        places,
-        lastCall,
         accessToken,
         tracks,
         tracksLoaded
