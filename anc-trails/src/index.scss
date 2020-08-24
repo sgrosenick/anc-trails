@@ -1,9 +1,19 @@
-@import '~semantic-ui-css/semantic.css';
 @import '~leaflet/dist/leaflet.css';
 @import '~tachyons/css/tachyons.css';
-@import '~react-semantic-toasts/styles/react-semantic-alert.css';
 
 body {
   margin: 0;
   padding: 0;
+}
+
+.control-area {
+  z-index: 999;
+  position: absolute;
+  width: 400px;
+  top: 10px;
+  left: 10px;
+  max-height: calc(100vh - 3vw);
+  overflow: auto;
+  padding: 20px;
+  background-color: white;
 }
