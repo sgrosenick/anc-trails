@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import { RECEIVE_PLACES_RESULTS, REQUEST_PLACES_RESULTS, CLEAR, UPDATE_BBOX, LOAD_TRACKS, GET_TOKEN } from '../actions/actions';
+import { RECEIVE_PLACES_RESULTS, REQUEST_PLACES_RESULTS, CLEAR, UPDATE_BBOX, LOAD_TRACKS, GET_TOKEN, REMOVE_2020_TRACKS } from '../actions/actions';
 
 const initialPlacesState = {
     boundingbox: '',
@@ -7,7 +7,8 @@ const initialPlacesState = {
     places: {},
     tracks: [],
     accessToken: "",
-    tracksLoaded: false
+    tracksLoaded: false,
+    remove2020Tracks: false
 }
 
 const placesControls = (state = initialPlacesState, action) => {
@@ -75,6 +76,11 @@ const placesControls = (state = initialPlacesState, action) => {
             return Object.assign({}, state, {
                 accessToken: action.payload.token
             })
+        case REMOVE_2020_TRACKS:
+            return {
+                ...state,
+                remove2020Tracks: !action.payload.remove2020Tracks
+            }
         default:
             return state;
     }

@@ -79,7 +79,7 @@ class Map extends React.Component {
     }
 
     componentDidUpdate(prevProps) {
-        const { accessToken, dispatch, tracks, tracksLoaded } = this.props;
+        const { accessToken, dispatch, tracks, tracksLoaded, remove2020Tracks } = this.props;
 
         if (accessToken != "" && tracksLoaded == false) {
             dispatch(getActivities({token: accessToken}))
@@ -87,6 +87,12 @@ class Map extends React.Component {
 
         if (tracksLoaded == true && tracks != prevProps.tracks) {
             this.addTracks();
+        }
+
+        if (remove2020Tracks == true) {
+            this.map.removeLayer(tracksLayer);
+        } else {
+            this.map.addLayer(tracksLayer);
         }
     }
 
@@ -122,11 +128,12 @@ class Map extends React.Component {
 }
 
 const mapStateToProps = state => {
-    const { accessToken, tracks, tracksLoaded } = state.placesControls;
+    const { accessToken, tracks, tracksLoaded, remove2020Tracks } = state.placesControls;
     return {
         accessToken,
         tracks,
-        tracksLoaded
+        tracksLoaded,
+        remove2020Tracks
     }
 }
 

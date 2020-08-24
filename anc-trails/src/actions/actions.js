@@ -7,6 +7,7 @@ export const CLEAR = 'CLEAR';
 export const UPDATE_BBOX = 'UPDATE_BBOX';
 export const LOAD_TRACKS = 'LOAD_TRACKS';
 export const GET_TOKEN = 'GET_TOKEN';
+export const REMOVE_2020_TRACKS = 'REMOVE_2020_TRACKS';
 
 export const fetchHerePlaces = payload => (dispatch, getState) => {
     // sample dispatcher will make our loading icon spin
@@ -158,4 +159,9 @@ export const getToken = token =>({
 const updateBoundingBox = bbox => ({
     type: UPDATE_BBOX,
     payload: bbox
+});
+
+export const toggle2020Tracks = toggle => ({
+  type: REMOVE_2020_TRACKS,
+  payload: toggle
 });

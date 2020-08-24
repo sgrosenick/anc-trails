@@ -5,7 +5,7 @@ import Button from '@material-ui/core/Button';
 import '../index.scss';
 
 //Actions
-import { clear, getAccessToken } from '../actions/actions';
+import { clear, getAccessToken, toggle2020Tracks } from '../actions/actions';
   
   
 class Control extends React.Component {
@@ -26,11 +26,19 @@ class Control extends React.Component {
       dispatch(clear())
     }
 
+    handleToggle2020Tracks = () => {
+      const { dispatch, remove2020Tracks } = this.props;
+      dispatch(toggle2020Tracks({remove2020Tracks}));
+    }
+
     render() {
         return (
           <div className="control-area">
             <h2>Legend</h2>
-            <Button color="primary">
+            <Button 
+              variant="contained"
+              color="primary"
+              onClick={this.handleToggle2020Tracks}>
               Toggle Tracks
             </Button>
           </div>
@@ -40,9 +48,10 @@ class Control extends React.Component {
     
     // connecting this class component to our react store!
     const mapStateToProps = state => {
-      const { places } = state.placesControls
+      const { places, remove2020Tracks } = state.placesControls
       return {
-        places
+        places,
+        remove2020Tracks
       }
     }
     
