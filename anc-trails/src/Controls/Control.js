@@ -7,7 +7,7 @@ import Switch from '@material-ui/core/Switch';
 import '../index.scss';
 
 //Actions
-import { clear, getAccessToken, toggle2020Tracks, toggle2019Tracks } from '../actions/actions';
+import { clear, getAccessToken, toggle2020Tracks, toggle2019Tracks, toggle2018Tracks, toggle2017Tracks, toggle2016Tracks, toggle2015Tracks } from '../actions/actions';
   
   
 class Control extends React.Component {
@@ -39,6 +39,26 @@ class Control extends React.Component {
       dispatch(toggle2019Tracks({show2019Tracks}));
     }
 
+    handleToggle2018Tracks = () => {
+      const { dispatch, show2018Tracks } = this.props;
+      dispatch(toggle2018Tracks({show2018Tracks}));
+    }
+
+    handleToggle2017Tracks = () => {
+      const { dispatch, show2017Tracks } = this.props;
+      dispatch(toggle2017Tracks({show2017Tracks}));
+    }
+
+    handleToggle2016Tracks = () => {
+      const { dispatch, show2016Tracks } = this.props;
+      dispatch(toggle2016Tracks({show2016Tracks}));
+    }
+
+    handleToggle2015Tracks = () => {
+      const { dispatch, show2015Tracks } = this.props;
+      dispatch(toggle2015Tracks({show2015Tracks}));
+    }
+
     render() {
         
         return (
@@ -56,6 +76,30 @@ class Control extends React.Component {
                 label="2019 Tracks">
               </FormControlLabel>
             </FormGroup>
+            <FormGroup>
+              <FormControlLabel
+                control={<Switch checked={this.props.show2018Tracks} onChange={this.handleToggle2018Tracks} />}
+                label="2018 Tracks">
+              </FormControlLabel>
+            </FormGroup>
+            <FormGroup>
+              <FormControlLabel
+                control={<Switch checked={this.props.show2017Tracks} onChange={this.handleToggle2017Tracks} />}
+                label="2017 Tracks">
+              </FormControlLabel>
+            </FormGroup>
+            <FormGroup>
+              <FormControlLabel
+                control={<Switch checked={this.props.show2016Tracks} onChange={this.handleToggle2016Tracks} />}
+                label="2016 Tracks">
+              </FormControlLabel>
+            </FormGroup>
+            <FormGroup>
+              <FormControlLabel
+                control={<Switch checked={this.props.show2015Tracks} onChange={this.handleToggle2015Tracks} />}
+                label="2015 Tracks">
+              </FormControlLabel>
+            </FormGroup>
           </div>
         )
       }
@@ -63,11 +107,15 @@ class Control extends React.Component {
     
     // connecting this class component to our react store!
     const mapStateToProps = state => {
-      const { places, show2020Tracks, show2019Tracks } = state.tracksReducer
+      const { places, show2020Tracks, show2019Tracks, show2018Tracks, show2017Tracks, show2016Tracks, show2015Tracks } = state.tracksReducer
       return {
         places,
         show2020Tracks,
-        show2019Tracks
+        show2019Tracks,
+        show2018Tracks,
+        show2017Tracks,
+        show2016Tracks,
+        show2015Tracks
       }
     }
     

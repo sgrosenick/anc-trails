@@ -17,12 +17,16 @@ const Stadia_AlidadeSmoothDark = L.tileLayer('https://tiles.stadiamaps.com/tiles
 
 const tracksLayer2020 = L.featureGroup();
 const tracksLayer2019 = L.featureGroup();
+const tracksLayer2018 = L.featureGroup();
+const tracksLayer2017 = L.featureGroup();
+const tracksLayer2016 = L.featureGroup();
+const tracksLayer2015 = L.featureGroup();
 
 const mapParams = {
     center: [61.160149, -149.96],
     zoomControl: false,
     zoom: 11.35,
-    layers: [tracksLayer2020, tracksLayer2019, Stadia_AlidadeSmoothDark]
+    layers: [tracksLayer2020, tracksLayer2019, tracksLayer2018, tracksLayer2017, tracksLayer2016, tracksLayer2015, Stadia_AlidadeSmoothDark]
 }
 
 class Map extends React.Component {
@@ -45,16 +49,79 @@ class Map extends React.Component {
         });
         this.map.on('click', function(e) {
             tracksLayer2020.setStyle({color: "green", weight: 2});
+            tracksLayer2019.setStyle({color: "orange", weight: 2});
+            tracksLayer2018.setStyle({color: "yellow", weight: 2});
+            tracksLayer2017.setStyle({color: "red", weight: 2});
+            tracksLayer2016.setStyle({color: "purple", weight: 2});
+            tracksLayer2015.setStyle({color: "pink", weight: 2});
         });
         
         tracksLayer2020.on('click', function(e) {
             const selectedId = e.layer._leaflet_id;
 
             tracksLayer2020.eachLayer(function(layer) {
-                console.log("Layer: " + layer);
                 layer.setStyle({color: "green", weight: 2});
                 if (layer._leaflet_id === selectedId) {
-                    console.log("found it");
+                    layer.setStyle({color: "blue", weight: 4});
+                    layer.bringToFront();
+                }
+            })
+        });
+
+        tracksLayer2019.on('click', function(e) {
+            const selectedId = e.layer._leaflet_id;
+
+            tracksLayer2019.eachLayer(function(layer) {
+                layer.setStyle({color: "orange", weight: 2});
+                if (layer._leaflet_id === selectedId) {
+                    layer.setStyle({color: "blue", weight: 4});
+                    layer.bringToFront();
+                }
+            })
+        });
+
+        tracksLayer2018.on('click', function(e) {
+            const selectedId = e.layer._leaflet_id;
+
+            tracksLayer2018.eachLayer(function(layer) {
+                layer.setStyle({color: "yellow", weight: 2});
+                if (layer._leaflet_id === selectedId) {
+                    layer.setStyle({color: "blue", weight: 4});
+                    layer.bringToFront();
+                }
+            })
+        });
+
+        tracksLayer2017.on('click', function(e) {
+            const selectedId = e.layer._leaflet_id;
+
+            tracksLayer2017.eachLayer(function(layer) {
+                layer.setStyle({color: "red", weight: 2});
+                if (layer._leaflet_id === selectedId) {
+                    layer.setStyle({color: "blue", weight: 4});
+                    layer.bringToFront();
+                }
+            })
+        });
+
+        tracksLayer2016.on('click', function(e) {
+            const selectedId = e.layer._leaflet_id;
+
+            tracksLayer2016.eachLayer(function(layer) {
+                layer.setStyle({color: "purple", weight: 2});
+                if (layer._leaflet_id === selectedId) {
+                    layer.setStyle({color: "blue", weight: 4});
+                    layer.bringToFront();
+                }
+            })
+        });
+
+        tracksLayer2015.on('click', function(e) {
+            const selectedId = e.layer._leaflet_id;
+
+            tracksLayer2015.eachLayer(function(layer) {
+                layer.setStyle({color: "pink", weight: 2});
+                if (layer._leaflet_id === selectedId) {
                     layer.setStyle({color: "blue", weight: 4});
                     layer.bringToFront();
                 }
@@ -63,15 +130,15 @@ class Map extends React.Component {
 
         dispatch(getAccessToken());
 
-        const baseMap = {
-            'Stadia Alidade Smooth Dark': Stadia_AlidadeSmoothDark
-        }
+        // const baseMap = {
+        //     'Stadia Alidade Smooth Dark': Stadia_AlidadeSmoothDark
+        // }
 
-        const overlayMaps = {
-            Tracks: tracksLayer2020
-        }
+        // const overlayMaps = {
+        //     Tracks: tracksLayer2020
+        // }
 
-        L.control.layers(baseMap, overlayMaps).addTo(this.map);
+        // L.control.layers(baseMap, overlayMaps).addTo(this.map);
 
         L.control.zoom({
             position: 'topright'
@@ -79,8 +146,11 @@ class Map extends React.Component {
     }
 
     componentDidUpdate(prevProps) {
-        const { accessToken, dispatch, tracks, tracks2019, tracksLoaded2020, tracksLoaded2019, show2020Tracks, show2019Tracks } = this.props;
+        const { accessToken, dispatch, tracks, tracks2019, tracks2018, tracks2017, tracks2016, tracks2015,
+            tracksLoaded2020, tracksLoaded2019, tracksLoaded2018, tracksLoaded2017, tracksLoaded2016, tracksLoaded2015,
+            show2020Tracks, show2019Tracks, show2018Tracks, show2017Tracks, show2016Tracks, show2015Tracks } = this.props;
 
+        // TRACKS LOADED
         if (accessToken !== "" && tracksLoaded2020 === false) {
             dispatch(getActivities({token: accessToken, year: 2020}))
         }
@@ -89,6 +159,23 @@ class Map extends React.Component {
             dispatch(getActivities({token: accessToken, year: 2019}))
         }
 
+        if (accessToken !== "" && tracksLoaded2019 === true && tracksLoaded2018 === false) {
+            dispatch(getActivities({token: accessToken, year: 2018}))
+        }
+
+        if (accessToken !== "" && tracksLoaded2018 === true && tracksLoaded2017 === false) {
+            dispatch(getActivities({token: accessToken, year: 2017}))
+        }
+
+        if (accessToken !== "" && tracksLoaded2017 === true && tracksLoaded2016 === false) {
+            dispatch(getActivities({token: accessToken, year: 2016}))
+        }
+
+        if (accessToken !== "" && tracksLoaded2016 === true && tracksLoaded2015 === false) {
+            dispatch(getActivities({token: accessToken, year: 2015}))
+        }
+
+        // ADD TRACKS
         if (tracksLoaded2020 === true && tracks !== prevProps.tracks) {
             this.addTracks(2020);
         }
@@ -97,6 +184,23 @@ class Map extends React.Component {
             this.addTracks(2019);
         }
 
+        if (tracksLoaded2018 === true && tracks2018 !== prevProps.tracks2018) {
+            this.addTracks(2018);
+        }
+
+        if (tracksLoaded2017 === true && tracks2017 !== prevProps.tracks2017) {
+            this.addTracks(2017);
+        }
+
+        if (tracksLoaded2016 === true && tracks2016 !== prevProps.tracks2016) {
+            this.addTracks(2016);
+        }
+
+        if (tracksLoaded2015 === true && tracks2015 !== prevProps.tracks2015) {
+            this.addTracks(2015);
+        }
+
+        // SHOW TRACKS
         if (show2020Tracks === false) {
             this.map.removeLayer(tracksLayer2020);
         } else {
@@ -107,6 +211,30 @@ class Map extends React.Component {
             this.map.removeLayer(tracksLayer2019);
         } else {
             this.map.addLayer(tracksLayer2019);
+        }
+
+        if (show2018Tracks === false) {
+            this.map.removeLayer(tracksLayer2018);
+        } else {
+            this.map.addLayer(tracksLayer2018);
+        }
+
+        if (show2017Tracks === false) {
+            this.map.removeLayer(tracksLayer2017);
+        } else {
+            this.map.addLayer(tracksLayer2017);
+        }
+
+        if (show2016Tracks === false) {
+            this.map.removeLayer(tracksLayer2016);
+        } else {
+            this.map.addLayer(tracksLayer2016);
+        }
+
+        if (show2015Tracks === false) {
+            this.map.removeLayer(tracksLayer2015);
+        } else {
+            this.map.addLayer(tracksLayer2015);
         }
     }
 
@@ -163,6 +291,106 @@ class Map extends React.Component {
                     }
                 }
                 break;
+            case 2018:
+                tracksLayer2018.clearLayers();
+
+                const { tracks2018 } = this.props;
+
+                for (const track of tracks2018) {
+                    if (track.type === "Ride") {
+                        const coords = L.Polyline.fromEncoded(track.map.summary_polyline).getLatLngs();
+
+                        const newLine = L.polyline(
+                            coords,
+                            {
+                                color: "yellow",
+                                weight: 2
+                            }
+                        );
+                
+                        const distance = track.distance / 1609.344;
+                        const roundDistance = Math.round(distance * 100) / 100;
+                        const popupText = "<b>2018 Track</b><br><b>" + track.name + "</b><br><b>Miles: " + roundDistance + "</b>"; 
+                        newLine.bindPopup(popupText);
+                        newLine.addTo(tracksLayer2018);
+                    }
+                }
+                break;
+            case 2017:
+                tracksLayer2017.clearLayers();
+
+                const { tracks2017 } = this.props;
+
+                for (const track of tracks2017) {
+                    if (track.type === "Ride") {
+                        const coords = L.Polyline.fromEncoded(track.map.summary_polyline).getLatLngs();
+
+                        const newLine = L.polyline(
+                            coords,
+                            {
+                                color: "red",
+                                weight: 2
+                            }
+                        );
+                
+                        const distance = track.distance / 1609.344;
+                        const roundDistance = Math.round(distance * 100) / 100;
+                        const popupText = "<b>2017 Track</b><br><b>" + track.name + "</b><br><b>Miles: " + roundDistance + "</b>"; 
+                        newLine.bindPopup(popupText);
+                        newLine.addTo(tracksLayer2017);
+                    }
+                }
+                break;
+            case 2016:
+                tracksLayer2016.clearLayers();
+
+                const { tracks2016 } = this.props;
+
+                for (const track of tracks2016) {
+                    if (track.type === "Ride") {
+                        const coords = L.Polyline.fromEncoded(track.map.summary_polyline).getLatLngs();
+
+                        const newLine = L.polyline(
+                            coords,
+                            {
+                                color: "purple",
+                                weight: 2
+                            }
+                        );
+                
+                        const distance = track.distance / 1609.344;
+                        const roundDistance = Math.round(distance * 100) / 100;
+                        const popupText = "<b>2016 Track</b><br><b>" + track.name + "</b><br><b>Miles: " + roundDistance + "</b>"; 
+                        newLine.bindPopup(popupText);
+                        newLine.addTo(tracksLayer2016);
+                    }
+                }
+                break;
+            case 2015:
+                tracksLayer2015.clearLayers();
+
+                const { tracks2015 } = this.props;
+
+                for (const track of tracks2015) {
+                    if (track.type === "Ride") {
+                        const coords = L.Polyline.fromEncoded(track.map.summary_polyline).getLatLngs();
+
+                        const newLine = L.polyline(
+                            coords,
+                            {
+                                color: "pink",
+                                weight: 2
+                            }
+                        );
+                
+                        const distance = track.distance / 1609.344;
+                        const roundDistance = Math.round(distance * 100) / 100;
+                        const popupText = "<b>2015 Track</b><br><b>" + track.name + "</b><br><b>Miles: " + roundDistance + "</b>"; 
+                        newLine.bindPopup(popupText);
+                        newLine.addTo(tracksLayer2015);
+                    }
+                }
+                break;
             default:
                 break;
         }
@@ -174,11 +402,17 @@ class Map extends React.Component {
 }
 
 const mapStateToProps = state => {
-    const { accessToken, tracks, tracks2019, tracksLoaded2020, tracksLoaded2019, tracksLoaded2018, tracksLoaded2017, tracksLoaded2016, tracksLoaded2015, show2020Tracks, show2019Tracks } = state.tracksReducer;
+    const { accessToken, tracks, tracks2019, tracks2018, tracks2017, tracks2016, tracks2015,
+        tracksLoaded2020, tracksLoaded2019, tracksLoaded2018, tracksLoaded2017, tracksLoaded2016, tracksLoaded2015,
+        show2020Tracks, show2019Tracks, show2018Tracks, show2017Tracks, show2016Tracks, show2015Tracks } = state.tracksReducer;
     return {
         accessToken,
         tracks,
         tracks2019,
+        tracks2018,
+        tracks2017,
+        tracks2016,
+        tracks2015,
         tracksLoaded2020,
         tracksLoaded2019,
         tracksLoaded2018,
@@ -186,7 +420,11 @@ const mapStateToProps = state => {
         tracksLoaded2016,
         tracksLoaded2015,
         show2020Tracks,
-        show2019Tracks
+        show2019Tracks,
+        show2018Tracks,
+        show2017Tracks,
+        show2016Tracks,
+        show2015Tracks
     }
 }
 

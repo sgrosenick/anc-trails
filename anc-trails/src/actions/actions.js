@@ -3,6 +3,10 @@ export const LOAD_TRACKS = 'LOAD_TRACKS';
 export const GET_TOKEN = 'GET_TOKEN';
 export const SHOW_2020_TRACKS = 'REMOVE_2020_TRACKS';
 export const SHOW_2019_TRACKS = 'SHOW_2019_TRACKS';
+export const SHOW_2018_TRACKS = 'SHOW_2018_TRACKS';
+export const SHOW_2017_TRACKS = 'SHOW_2017_TRACKS';
+export const SHOW_2016_TRACKS = 'SHOW_2016_TRACKS';
+export const SHOW_2015_TRACKS = 'SHOW_2015_TRACKS';
 
 export const getActivities = payload => (dispatch) => {
 
@@ -107,5 +111,25 @@ export const toggle2020Tracks = toggle => ({
 
 export const toggle2019Tracks = toggle => ({
   type: SHOW_2019_TRACKS,
+  payload: toggle
+});
+
+export const toggle2018Tracks = toggle => ({
+  type: SHOW_2018_TRACKS,
+  payload: toggle
+});
+
+export const toggle2017Tracks = toggle => ({
+  type: SHOW_2017_TRACKS,
+  payload: toggle
+});
+
+export const toggle2016Tracks = toggle => ({
+  type: SHOW_2016_TRACKS,
+  payload: toggle
+});
+
+export const toggle2015Tracks = toggle => ({
+  type: SHOW_2015_TRACKS,
   payload: toggle
 });
