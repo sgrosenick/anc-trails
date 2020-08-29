@@ -2,6 +2,7 @@ export const CLEAR = 'CLEAR';
 export const LOAD_TRACKS = 'LOAD_TRACKS';
 export const GET_TOKEN = 'GET_TOKEN';
 export const SHOW_2020_TRACKS = 'REMOVE_2020_TRACKS';
+export const SHOW_2019_TRACKS = 'SHOW_2019_TRACKS';
 
 export const getActivities = payload => (dispatch) => {
 
@@ -37,7 +38,7 @@ export const getActivities = payload => (dispatch) => {
 
   return fetch(url)
     .then(response => response.json())
-    .then(data => dispatch(proccessTracksResponse(data)))
+    .then(data => dispatch(proccessTracksResponse(data, payload.year)))
     .catch(error => console.log(error));
 }
 
@@ -80,11 +81,12 @@ export const clear = () => ({
     }
   }
 
-  const proccessTracksResponse = (json) => dispatch => {
+  const proccessTracksResponse = (json, year) => dispatch => {
     const results = parseTracksResponse(json);
 
     dispatch(loadTracks({
-      tracks: json
+      tracks: json,
+      year: year
     }));
   }
 
@@ -100,5 +102,10 @@ export const getToken = token =>({
 
 export const toggle2020Tracks = toggle => ({
   type: SHOW_2020_TRACKS,
+  payload: toggle
+});
+
+export const toggle2019Tracks = toggle => ({
+  type: SHOW_2019_TRACKS,
   payload: toggle
 });

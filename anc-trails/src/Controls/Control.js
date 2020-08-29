@@ -7,7 +7,7 @@ import Switch from '@material-ui/core/Switch';
 import '../index.scss';
 
 //Actions
-import { clear, getAccessToken, toggle2020Tracks } from '../actions/actions';
+import { clear, getAccessToken, toggle2020Tracks, toggle2019Tracks } from '../actions/actions';
   
   
 class Control extends React.Component {
@@ -34,6 +34,11 @@ class Control extends React.Component {
       dispatch(toggle2020Tracks({show2020Tracks}));
     }
 
+    handleToggle2019Tracks = () => {
+      const { dispatch, show2019Tracks } = this.props;
+      dispatch(toggle2019Tracks({show2019Tracks}));
+    }
+
     render() {
         
         return (
@@ -45,6 +50,12 @@ class Control extends React.Component {
                 label="2020 Tracks">
               </FormControlLabel>
             </FormGroup>
+            <FormGroup>
+              <FormControlLabel
+                control={<Switch checked={this.props.show2019Tracks} onChange={this.handleToggle2019Tracks} />}
+                label="2019 Tracks">
+              </FormControlLabel>
+            </FormGroup>
           </div>
         )
       }
@@ -52,10 +63,11 @@ class Control extends React.Component {
     
     // connecting this class component to our react store!
     const mapStateToProps = state => {
-      const { places, show2020Tracks } = state.tracksReducer
+      const { places, show2020Tracks, show2019Tracks } = state.tracksReducer
       return {
         places,
-        show2020Tracks
+        show2020Tracks,
+        show2019Tracks
       }
     }
     
