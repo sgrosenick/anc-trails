@@ -2,7 +2,7 @@ import React from 'react';
 import L from 'leaflet';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { doUpdateBoundingBox, getAccessToken, getActivities } from '../actions/actions';
+import { getAccessToken, getActivities } from '../actions/actions';
 import 'polyline-encoded';
 
 const style = {
@@ -15,8 +15,6 @@ const Stadia_AlidadeSmoothDark = L.tileLayer('https://tiles.stadiamaps.com/tiles
         attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
         });
 
-const placesLayer = L.featureGroup();
-const clusterLayer = L.featureGroup();
 const tracksLayer = L.featureGroup();
 
 const mapParams = {
@@ -53,7 +51,7 @@ class Map extends React.Component {
             tracksLayer.eachLayer(function(layer) {
                 console.log("Layer: " + layer);
                 layer.setStyle({color: "green", weight: 2});
-                if (layer._leaflet_id == selectedId) {
+                if (layer._leaflet_id === selectedId) {
                     console.log("found it");
                     layer.setStyle({color: "blue", weight: 4});
                     layer.bringToFront();
@@ -79,17 +77,17 @@ class Map extends React.Component {
     }
 
     componentDidUpdate(prevProps) {
-        const { accessToken, dispatch, tracks, tracksLoaded, remove2020Tracks } = this.props;
+        const { accessToken, dispatch, tracks, tracksLoaded2020, show2020Tracks } = this.props;
 
-        if (accessToken != "" && tracksLoaded == false) {
-            dispatch(getActivities({token: accessToken}))
+        if (accessToken !== "" && tracksLoaded2020 === false) {
+            dispatch(getActivities({token: accessToken, year: 2020}))
         }
 
-        if (tracksLoaded == true && tracks != prevProps.tracks) {
+        if (tracksLoaded2020 === true && tracks !== prevProps.tracks) {
             this.addTracks();
         }
 
-        if (remove2020Tracks == true) {
+        if (show2020Tracks === false) {
             this.map.removeLayer(tracksLayer);
         } else {
             this.map.addLayer(tracksLayer);
@@ -128,12 +126,17 @@ class Map extends React.Component {
 }
 
 const mapStateToProps = state => {
-    const { accessToken, tracks, tracksLoaded, remove2020Tracks } = state.placesControls;
+    const { accessToken, tracks, tracksLoaded2020, tracksLoaded2019, tracksLoaded2018, tracksLoaded2017, tracksLoaded2016, tracksLoaded2015, show2020Tracks } = state.tracksReducer;
     return {
         accessToken,
         tracks,
-        tracksLoaded,
-        remove2020Tracks
+        tracksLoaded2020,
+        tracksLoaded2019,
+        tracksLoaded2018,
+        tracksLoaded2017,
+        tracksLoaded2016,
+        tracksLoaded2015,
+        show2020Tracks
     }
 }
 

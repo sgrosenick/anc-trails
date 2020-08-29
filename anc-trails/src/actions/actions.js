@@ -1,55 +1,39 @@
-const hereAppCode = '0XXQyxbiCjVU7jN2URXuhg'
-const hereAppId = 'yATlKFDZwdLtjHzyTeCK'
-
-export const RECEIVE_PLACES_RESULTS = 'RECIEVE_PLACES_RESULTS';
-export const REQUEST_PLACES_RESULTS = 'REQUEST_PLACES_RESULTS';
 export const CLEAR = 'CLEAR';
-export const UPDATE_BBOX = 'UPDATE_BBOX';
 export const LOAD_TRACKS = 'LOAD_TRACKS';
 export const GET_TOKEN = 'GET_TOKEN';
-export const REMOVE_2020_TRACKS = 'REMOVE_2020_TRACKS';
-
-export const fetchHerePlaces = payload => (dispatch, getState) => {
-    // sample dispatcher will make our loading icon spin
-    dispatch(requestPlacesResults({ category: payload.category }));
-
-    const { boundingbox } = getState().placesControls;
-
-    // to learn more about the parameters use this link https://developer.here.com/documentation/places/topics/search-results-ranking.html
-    const url = new URL(
-        'https://places.demo.api.here.com/places/v1/discover/explore'
-    )
-
-    const params = {
-        app_id: hereAppId,
-        app_code: hereAppCode,
-        // this will come from the map class component which yet has to be coded
-        in: boundingbox,
-        // the amount of places
-        size: 100,
-        // and the category clicked by the user
-        cat: payload.category
-    }
-
-    url.search = new URLSearchParams(params);
-
-    return fetch(url)
-        .then(response => response.json())
-        .then(data => 
-            dispatch(
-                processPlacesResponse(
-                    data,
-                    payload.category,
-                    boundingbox,
-                    payload.color
-                )
-            )
-        )
-        .catch(error => console.log(error));
-}
+export const SHOW_2020_TRACKS = 'REMOVE_2020_TRACKS';
 
 export const getActivities = payload => (dispatch) => {
-  const url = new URL('https://www.strava.com/api/v3/athlete/activities?after=1577836800&per_page=200&access_token=' + payload.token);
+
+  const url2020 = new URL('https://www.strava.com/api/v3/athlete/activities?after=1577836800&per_page=200&access_token=');
+  const url2019 = new URL('https://www.strava.com/api/v3/athlete/activities?before=1577750400&after=1546300800&per_page=200&access_token=');
+  const url2018 = new URL('https://www.strava.com/api/v3/athlete/activities?before=1546214400&after=1514764800&per_page=200&access_token=');
+  const url2017 = new URL('https://www.strava.com/api/v3/athlete/activities?before=1514678400&after=1483228800&per_page=200&access_token=');
+  const url2016 = new URL('https://www.strava.com/api/v3/athlete/activities?before=1483142400&after=1451606400&per_page=200&access_token=');
+  const url2015 = new URL('https://www.strava.com/api/v3/athlete/activities?before=1451520000&after=1420070400&per_page=200&access_token=');
+
+  var url = new URL('https://www.strava.com/api/v3/athlete/activities?after=1577836800&per_page=200&access_token=');
+
+  switch(payload.year) {
+    case 2020:
+      url = url2020 + payload.token;
+      break;
+    case 2019:
+      url = url2019 + payload.token;
+      break;
+    case 2018:
+      url = url2018 + payload.token;
+      break;
+    case 2017:
+      url = url2017 + payload.token;
+      break;
+    case 2016:
+      url = url2016 + payload.token;
+      break;
+    case 2015:
+      url = url2015 + payload.token;
+      break;
+  }
 
   return fetch(url)
     .then(response => response.json())
@@ -82,27 +66,6 @@ export const clear = () => ({
     type: CLEAR
   })
 
-const parsePlacesResponse = json => {
-    if (json.results && json.results.items.length > 0) {
-      return json.results.items
-    }
-    return []
-  }
-  
-  const processPlacesResponse = (json, category, bbox, color) => dispatch => {
-    const results = parsePlacesResponse(json)
-  
-    // the response is parsed and ready to be dispatched to our reducer
-    dispatch(
-      receivePlacesResults({
-        data: results,
-        category: category,
-        boundingbox: bbox,
-        color: color
-      })
-    )
-  }
-
   const processAccessTokenResponse = json => dispatch => {
     const token = json.access_token;
 
@@ -125,27 +88,6 @@ const parsePlacesResponse = json => {
     }));
   }
 
-export const receivePlacesResults = places => ({
-    type: RECEIVE_PLACES_RESULTS,
-    payload: places
-  })
-  
-export const requestPlacesResults = category => ({
-    type: REQUEST_PLACES_RESULTS,
-    payload: category
-  })
-
-export const doUpdateBoundingBox = boundingbox => dispatch => {
-    const bbox = [
-        boundingbox._southWest.lng,
-        boundingbox._southWest.lat,
-        boundingbox._northEast.lng,
-        boundingbox._northEast.lat
-    ].join(',');
-
-    dispatch(updateBoundingBox(bbox));
-}
-
 export const loadTracks = tracks => ({
   type: LOAD_TRACKS,
   payload: tracks
@@ -156,12 +98,7 @@ export const getToken = token =>({
   payload: token
 })
 
-const updateBoundingBox = bbox => ({
-    type: UPDATE_BBOX,
-    payload: bbox
-});
-
 export const toggle2020Tracks = toggle => ({
-  type: REMOVE_2020_TRACKS,
+  type: SHOW_2020_TRACKS,
   payload: toggle
 });

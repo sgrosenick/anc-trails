@@ -1,7 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import Button from '@material-ui/core/Button';
+import FormGroup from '@material-ui/core/FormGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Switch from '@material-ui/core/Switch';
 import '../index.scss';
 
 //Actions
@@ -11,7 +13,8 @@ import { clear, getAccessToken, toggle2020Tracks } from '../actions/actions';
 class Control extends React.Component {
     static propTypes = {
       places: PropTypes.object,
-      dispatch: PropTypes.func.isRequired
+      dispatch: PropTypes.func.isRequired,
+      remove2020Tracks: PropTypes.bool
     }
 
 
@@ -27,20 +30,21 @@ class Control extends React.Component {
     }
 
     handleToggle2020Tracks = () => {
-      const { dispatch, remove2020Tracks } = this.props;
-      dispatch(toggle2020Tracks({remove2020Tracks}));
+      const { dispatch, show2020Tracks } = this.props;
+      dispatch(toggle2020Tracks({show2020Tracks}));
     }
 
     render() {
+        
         return (
           <div className="control-area">
             <h2>Legend</h2>
-            <Button 
-              variant="contained"
-              color="primary"
-              onClick={this.handleToggle2020Tracks}>
-              Toggle Tracks
-            </Button>
+            <FormGroup>
+              <FormControlLabel
+                control={<Switch checked={this.props.show2020Tracks} onChange={this.handleToggle2020Tracks} />}
+                label="2020 Tracks">
+              </FormControlLabel>
+            </FormGroup>
           </div>
         )
       }
@@ -48,10 +52,10 @@ class Control extends React.Component {
     
     // connecting this class component to our react store!
     const mapStateToProps = state => {
-      const { places, remove2020Tracks } = state.placesControls
+      const { places, show2020Tracks } = state.tracksReducer
       return {
         places,
-        remove2020Tracks
+        show2020Tracks
       }
     }
     
