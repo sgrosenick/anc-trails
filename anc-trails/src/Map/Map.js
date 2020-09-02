@@ -48,21 +48,21 @@ class Map extends React.Component {
             //dispatch(doUpdateBoundingBox(this.map.getBounds()));
         });
         this.map.on('click', function(e) {
-            tracksLayer2020.setStyle({color: "green", weight: 2});
-            tracksLayer2019.setStyle({color: "orange", weight: 2});
-            tracksLayer2018.setStyle({color: "yellow", weight: 2});
-            tracksLayer2017.setStyle({color: "red", weight: 2});
-            tracksLayer2016.setStyle({color: "purple", weight: 2});
-            tracksLayer2015.setStyle({color: "pink", weight: 2});
+            tracksLayer2020.setStyle({color: process.env.REACT_APP_TRACK_2020_COLOR, weight: 2});
+            tracksLayer2019.setStyle({color: process.env.REACT_APP_TRACK_2019_COLOR, weight: 2});
+            tracksLayer2018.setStyle({color: process.env.REACT_APP_TRACK_2018_COLOR, weight: 2});
+            tracksLayer2017.setStyle({color: process.env.REACT_APP_TRACK_2017_COLOR, weight: 2});
+            tracksLayer2016.setStyle({color: process.env.REACT_APP_TRACK_2016_COLOR, weight: 2});
+            tracksLayer2015.setStyle({color: process.env.REACT_APP_TRACK_2015_COLOR, weight: 2});
         });
         
         tracksLayer2020.on('click', function(e) {
             const selectedId = e.layer._leaflet_id;
 
             tracksLayer2020.eachLayer(function(layer) {
-                layer.setStyle({color: "green", weight: 2});
+                layer.setStyle({color: process.env.REACT_APP_TRACK_2020_COLOR, weight: 2});
                 if (layer._leaflet_id === selectedId) {
-                    layer.setStyle({color: "blue", weight: 4});
+                    layer.setStyle({color: process.env.REACT_APP_TRACK_HIGHLIGHT_COLOR, weight: 4});
                     layer.bringToFront();
                 }
             })
@@ -72,9 +72,9 @@ class Map extends React.Component {
             const selectedId = e.layer._leaflet_id;
 
             tracksLayer2019.eachLayer(function(layer) {
-                layer.setStyle({color: "orange", weight: 2});
+                layer.setStyle({color: process.env.REACT_APP_TRACK_2019_COLOR, weight: 2});
                 if (layer._leaflet_id === selectedId) {
-                    layer.setStyle({color: "blue", weight: 4});
+                    layer.setStyle({color: process.env.REACT_APP_TRACK_HIGHLIGHT_COLOR, weight: 4});
                     layer.bringToFront();
                 }
             })
@@ -84,9 +84,9 @@ class Map extends React.Component {
             const selectedId = e.layer._leaflet_id;
 
             tracksLayer2018.eachLayer(function(layer) {
-                layer.setStyle({color: "yellow", weight: 2});
+                layer.setStyle({color: process.env.REACT_APP_TRACK_2018_COLOR, weight: 2});
                 if (layer._leaflet_id === selectedId) {
-                    layer.setStyle({color: "blue", weight: 4});
+                    layer.setStyle({color: process.env.REACT_APP_TRACK_HIGHLIGHT_COLOR, weight: 4});
                     layer.bringToFront();
                 }
             })
@@ -96,9 +96,9 @@ class Map extends React.Component {
             const selectedId = e.layer._leaflet_id;
 
             tracksLayer2017.eachLayer(function(layer) {
-                layer.setStyle({color: "red", weight: 2});
+                layer.setStyle({color: process.env.REACT_APP_TRACK_2017_COLOR, weight: 2});
                 if (layer._leaflet_id === selectedId) {
-                    layer.setStyle({color: "blue", weight: 4});
+                    layer.setStyle({color: process.env.REACT_APP_TRACK_HIGHLIGHT_COLOR, weight: 4});
                     layer.bringToFront();
                 }
             })
@@ -108,9 +108,9 @@ class Map extends React.Component {
             const selectedId = e.layer._leaflet_id;
 
             tracksLayer2016.eachLayer(function(layer) {
-                layer.setStyle({color: "purple", weight: 2});
+                layer.setStyle({color: process.env.REACT_APP_TRACK_2016_COLOR, weight: 2});
                 if (layer._leaflet_id === selectedId) {
-                    layer.setStyle({color: "blue", weight: 4});
+                    layer.setStyle({color: process.env.REACT_APP_TRACK_HIGHLIGHT_COLOR, weight: 4});
                     layer.bringToFront();
                 }
             })
@@ -120,25 +120,15 @@ class Map extends React.Component {
             const selectedId = e.layer._leaflet_id;
 
             tracksLayer2015.eachLayer(function(layer) {
-                layer.setStyle({color: "pink", weight: 2});
+                layer.setStyle({color: process.env.REACT_APP_TRACK_2015_COLOR, weight: 2});
                 if (layer._leaflet_id === selectedId) {
-                    layer.setStyle({color: "blue", weight: 4});
+                    layer.setStyle({color: process.env.REACT_APP_TRACK_HIGHLIGHT_COLOR, weight: 4});
                     layer.bringToFront();
                 }
             })
         });
 
         dispatch(getAccessToken());
-
-        // const baseMap = {
-        //     'Stadia Alidade Smooth Dark': Stadia_AlidadeSmoothDark
-        // }
-
-        // const overlayMaps = {
-        //     Tracks: tracksLayer2020
-        // }
-
-        // L.control.layers(baseMap, overlayMaps).addTo(this.map);
 
         L.control.zoom({
             position: 'topright'
@@ -253,7 +243,7 @@ class Map extends React.Component {
                         const newLine = L.polyline(
                             coords,
                             {
-                                color: "green",
+                                color: process.env.REACT_APP_TRACK_2020_COLOR,
                                 weight: 2
                             }
                         );
@@ -278,7 +268,7 @@ class Map extends React.Component {
                         const newLine = L.polyline(
                             coords,
                             {
-                                color: "orange",
+                                color: process.env.REACT_APP_TRACK_2019_COLOR,
                                 weight: 2
                             }
                         );
@@ -303,7 +293,7 @@ class Map extends React.Component {
                         const newLine = L.polyline(
                             coords,
                             {
-                                color: "yellow",
+                                color: process.env.REACT_APP_TRACK_2018_COLOR,
                                 weight: 2
                             }
                         );
@@ -328,7 +318,7 @@ class Map extends React.Component {
                         const newLine = L.polyline(
                             coords,
                             {
-                                color: "red",
+                                color: process.env.REACT_APP_TRACK_2017_COLOR,
                                 weight: 2
                             }
                         );
@@ -353,7 +343,7 @@ class Map extends React.Component {
                         const newLine = L.polyline(
                             coords,
                             {
-                                color: "purple",
+                                color: process.env.REACT_APP_TRACK_2016_COLOR,
                                 weight: 2
                             }
                         );
@@ -378,7 +368,7 @@ class Map extends React.Component {
                         const newLine = L.polyline(
                             coords,
                             {
-                                color: "pink",
+                                color: process.env.REACT_APP_TRACK_2015_COLOR,
                                 weight: 2
                             }
                         );

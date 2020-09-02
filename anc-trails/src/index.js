@@ -9,6 +9,8 @@ import thunk from 'redux-thunk'
 
 import reducer from './reducers'
 import './index.scss';
+import { ThemeProvider } from "@material-ui/core/styles";
+import trailsTheme from './style/trailsTheme';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 require('dotenv').config();
@@ -23,7 +25,9 @@ const store = createStore(
 ReactDOM.render(
   <Provider store={store}>
     {' '}
-    <App />
+    <ThemeProvider theme={trailsTheme}>
+      <App />
+    </ThemeProvider>
   </Provider>,
   document.getElementById('root')
 );

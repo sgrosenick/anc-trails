@@ -8,6 +8,10 @@ import '../index.scss';
 
 //Actions
 import { clear, getAccessToken, toggle2020Tracks, toggle2019Tracks, toggle2018Tracks, toggle2017Tracks, toggle2016Tracks, toggle2015Tracks } from '../actions/actions';
+
+//Custom Switches
+import { Track2020Switch, Track2019Switch, Track2018Switch, Track2017Switch, Track2016Switch, Track2015Switch }  from './Swtiches'
+
   
   
 class Control extends React.Component {
@@ -66,37 +70,37 @@ class Control extends React.Component {
             <h2>Legend</h2>
             <FormGroup>
               <FormControlLabel
-                control={<Switch checked={this.props.show2020Tracks} onChange={this.handleToggle2020Tracks} />}
+                control={<Track2020Switch checked={this.props.show2020Tracks} onChange={this.handleToggle2020Tracks} />}
                 label="2020 Tracks">
               </FormControlLabel>
             </FormGroup>
             <FormGroup>
               <FormControlLabel
-                control={<Switch checked={this.props.show2019Tracks} onChange={this.handleToggle2019Tracks} />}
+                control={<Track2019Switch checked={this.props.show2019Tracks} onChange={this.handleToggle2019Tracks} />}
                 label="2019 Tracks">
               </FormControlLabel>
             </FormGroup>
             <FormGroup>
               <FormControlLabel
-                control={<Switch checked={this.props.show2018Tracks} onChange={this.handleToggle2018Tracks} />}
+                control={<Track2018Switch checked={this.props.show2018Tracks} onChange={this.handleToggle2018Tracks} />}
                 label="2018 Tracks">
               </FormControlLabel>
             </FormGroup>
             <FormGroup>
               <FormControlLabel
-                control={<Switch checked={this.props.show2017Tracks} onChange={this.handleToggle2017Tracks} />}
+                control={<Track2017Switch checked={this.props.show2017Tracks} onChange={this.handleToggle2017Tracks} />}
                 label="2017 Tracks">
               </FormControlLabel>
             </FormGroup>
             <FormGroup>
               <FormControlLabel
-                control={<Switch checked={this.props.show2016Tracks} onChange={this.handleToggle2016Tracks} />}
+                control={<Track2016Switch checked={this.props.show2016Tracks} onChange={this.handleToggle2016Tracks} />}
                 label="2016 Tracks">
               </FormControlLabel>
             </FormGroup>
             <FormGroup>
               <FormControlLabel
-                control={<Switch checked={this.props.show2015Tracks} onChange={this.handleToggle2015Tracks} />}
+                control={<Track2015Switch checked={this.props.show2015Tracks} onChange={this.handleToggle2015Tracks} />}
                 label="2015 Tracks">
               </FormControlLabel>
             </FormGroup>
