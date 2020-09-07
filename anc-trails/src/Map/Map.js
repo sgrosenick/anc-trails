@@ -3,7 +3,9 @@ import L from 'leaflet';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { getAccessToken, getActivities, SHOW_2019_TRACKS } from '../actions/actions';
+import { popupStyle } from './Popup';
 import 'polyline-encoded';
+import "../style/popup.scss"
 
 const style = {
     width: '100%',
@@ -248,9 +250,7 @@ class Map extends React.Component {
                             }
                         );
                 
-                        const distance = track.distance / 1609.344;
-                        const roundDistance = Math.round(distance * 100) / 100;
-                        const popupText = "<b>2020 Track</b><br><b>" + track.name + "</b><br><b>Miles: " + roundDistance + "</b>"; 
+                        const popupText = popupStyle(track);
                         newLine.bindPopup(popupText);
                         newLine.addTo(tracksLayer2020);
                     }
@@ -272,10 +272,8 @@ class Map extends React.Component {
                                 weight: 2
                             }
                         );
-                
-                        const distance = track.distance / 1609.344;
-                        const roundDistance = Math.round(distance * 100) / 100;
-                        const popupText = "<b>2019 Track</b><br><b>" + track.name + "</b><br><b>Miles: " + roundDistance + "</b>"; 
+                        
+                        const popupText = popupStyle(track);
                         newLine.bindPopup(popupText);
                         newLine.addTo(tracksLayer2019);
                     }
@@ -297,10 +295,8 @@ class Map extends React.Component {
                                 weight: 2
                             }
                         );
-                
-                        const distance = track.distance / 1609.344;
-                        const roundDistance = Math.round(distance * 100) / 100;
-                        const popupText = "<b>2018 Track</b><br><b>" + track.name + "</b><br><b>Miles: " + roundDistance + "</b>"; 
+            
+                        const popupText = popupStyle(track);
                         newLine.bindPopup(popupText);
                         newLine.addTo(tracksLayer2018);
                     }
@@ -322,10 +318,8 @@ class Map extends React.Component {
                                 weight: 2
                             }
                         );
-                
-                        const distance = track.distance / 1609.344;
-                        const roundDistance = Math.round(distance * 100) / 100;
-                        const popupText = "<b>2017 Track</b><br><b>" + track.name + "</b><br><b>Miles: " + roundDistance + "</b>"; 
+            
+                        const popupText = popupStyle(track);
                         newLine.bindPopup(popupText);
                         newLine.addTo(tracksLayer2017);
                     }
@@ -348,9 +342,7 @@ class Map extends React.Component {
                             }
                         );
                 
-                        const distance = track.distance / 1609.344;
-                        const roundDistance = Math.round(distance * 100) / 100;
-                        const popupText = "<b>2016 Track</b><br><b>" + track.name + "</b><br><b>Miles: " + roundDistance + "</b>"; 
+                        const popupText = popupStyle(track); 
                         newLine.bindPopup(popupText);
                         newLine.addTo(tracksLayer2016);
                     }
@@ -372,10 +364,8 @@ class Map extends React.Component {
                                 weight: 2
                             }
                         );
-                
-                        const distance = track.distance / 1609.344;
-                        const roundDistance = Math.round(distance * 100) / 100;
-                        const popupText = "<b>2015 Track</b><br><b>" + track.name + "</b><br><b>Miles: " + roundDistance + "</b>"; 
+                        
+                        const popupText = popupStyle(track);
                         newLine.bindPopup(popupText);
                         newLine.addTo(tracksLayer2015);
                     }
