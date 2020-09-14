@@ -1,3 +1,68 @@
 .leaflet-popup-content-wrapper, .leaflet-popup-tip {
-    background-color: green;
+    background-color: orange;
+}
+
+.leaflet-popup-content {
+    height: fit-content;
+    width: fit-content;
+    display: inline-flex;
+}
+
+.leaflet-container a.leaflet-popup-close-button {
+    color: black;
+}
+
+#tracks-popup {
+    display: flex;
+    flex-direction: column;
+}
+
+#popup-header {
+    text-align: center;
+    margin-bottom: 10px;
+    font-weight: 500;
+}
+
+.popup-container {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+}
+
+.popup-detail {
+    display: grid;
+    grid-template-columns: 26% 8% 26% 8% 32%;
+}
+
+.popup-title {
+    grid-column: span 12;
+    padding-bottom: 8px;
+    font-size: small;
+    font-weight: 600;
+}
+
+.item {
+    display: grid;
+    grid-template-columns: 1fr;
+}
+
+.item-label {
+    font-size: x-small;
+}
+
+.item-data {
+    font-size: small;
+    font-weight: 400;
+    white-space: nowrap;
+}
+
+.second-item {
+    grid-column: span 4;
+}
+
+.separator {
+    border-left: 1px solid black;
+    height: 100%;
+    position: relative;
+    margin-left: 4px;
+    margin-right: 8px;
 }
