@@ -1,5 +1,11 @@
 .leaflet-popup-content-wrapper, .leaflet-popup-tip {
-    background-color: orange;
+    background-color: #34495e;
+    color: #ecf0f1;
+    font-family: 'Rubik', sans-serif;
+}
+
+.leaflet-popup-content-wrapper {
+    border-radius: 8px;
 }
 
 .leaflet-popup-content {
@@ -9,7 +15,7 @@
 }
 
 .leaflet-container a.leaflet-popup-close-button {
-    color: black;
+    color: #ecf0f1;
 }
 
 #tracks-popup {
@@ -50,7 +56,7 @@
 }
 
 .item-data {
-    font-size: small;
+    font-size: medium;
     font-weight: 400;
     white-space: nowrap;
 }
@@ -60,9 +66,9 @@
 }
 
 .separator {
-    border-left: 1px solid black;
-    height: 100%;
+    border-left: 1px solid #ecf0f1;
+    height: 90%;
     position: relative;
-    margin-left: 4px;
+    margin-left: 6px;
     margin-right: 8px;
 }

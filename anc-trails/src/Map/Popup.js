@@ -11,21 +11,6 @@ export const popupStyle = (track) => {
     const timeMinutesRound = Math.floor(timeMinutes);
 
     return(
-        // "<div id='tracks-popup'>" +
-        //     "<div id='popup-header'>" +
-        //     track.name +
-        //     "</div>" +
-        //     "<div>" + "<b>Distance: </b>" +
-        //     roundDistance + " miles" +
-        //     "</div>" +
-        //     "<div>" +
-        //     "<b>Achievments: </b>" + track.achievement_count + 
-        //     "</div>" +
-        //     "<div>" +
-        //     "<b>Date: </b>" + month + " " + day + ", " + year +
-        //     "</div>" +
-        // "</div>"
-
         "<div class='popup-container'>" +
             "<div class='popup-title'>"
                 + track.name +
