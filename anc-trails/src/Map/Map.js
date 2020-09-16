@@ -4,6 +4,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { getAccessToken, getActivities, SHOW_2019_TRACKS } from '../actions/actions';
 import { popupStyle } from './Popup';
+import { buffer } from '@turf/turf';
 import 'polyline-encoded';
 import "../style/popup.scss"
 

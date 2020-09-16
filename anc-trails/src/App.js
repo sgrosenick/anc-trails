@@ -4,9 +4,9 @@ import Controls from './Controls/Control';
  
 function App() {
   return (
-    <div>
-      <Map />
+    <div className="map-container">
       <Controls />
+      <Map />
     </div>
   );
 }

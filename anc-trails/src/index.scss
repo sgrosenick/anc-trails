@@ -6,16 +6,15 @@ body {
   padding: 0;
 }
 
+.map-container {
+  display: flex;
+}
+
 .control-area {
-  z-index: 999;
-  position: absolute;
-  width: 400px;
-  top: 10px;
-  left: 10px;
-  max-height: calc(100vh - 3vw);
-  overflow: auto;
+  width: 350px;
+  height: 100vh;
   padding: 20px;
-  background-color: white;
+  background-color: #34495e;
   font-family: 'Rubik', sans-serif;
 }
 
