@@ -3,11 +3,12 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Button from '@material-ui/core/Button';
 import Switch from '@material-ui/core/Switch';
 import '../index.scss';
 
 //Actions
-import { clear, getAccessToken, toggle2020Tracks, toggle2019Tracks, toggle2018Tracks, toggle2017Tracks, toggle2016Tracks, toggle2015Tracks } from '../actions/actions';
+import { clear, getAccessToken, getStreets, toggle2020Tracks, toggle2019Tracks, toggle2018Tracks, toggle2017Tracks, toggle2016Tracks, toggle2015Tracks } from '../actions/actions';
 
 //Custom Switches
 import { Track2020Switch, Track2019Switch, Track2018Switch, Track2017Switch, Track2016Switch, Track2015Switch }  from './Swtiches'
@@ -21,6 +22,10 @@ class Control extends React.Component {
       remove2020Tracks: PropTypes.bool
     }
 
+    handleLoadStreets = () => {
+      const { dispatch } = this.props;
+      dispatch(getStreets())
+    }
 
     handleLoadTracksClick = () => {
       const { dispatch, accessToken } = this.props;
@@ -104,6 +109,9 @@ class Control extends React.Component {
                 label="2015 Tracks">
               </FormControlLabel>
             </FormGroup>
+            <Button color="primary" onClick={this.handleLoadStreets}>
+              Load Streets
+            </Button>
           </div>
         )
       }

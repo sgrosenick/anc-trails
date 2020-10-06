@@ -7,13 +7,16 @@ export const popupStyle = (track) => {
     const distance = track.distance / 1609.344;
     const roundDistance = Math.round(distance * 100) / 100;
     const timeHours = Math.floor(track.moving_time / 3600);
-    const timeMinutes = (track.moving_time % 3600) / 1200;
+    const timeMinutes = (track.moving_time % 3600) / 60;
     const timeMinutesRound = Math.floor(timeMinutes);
 
     return(
         "<div class='popup-container'>" +
             "<div class='popup-title'>"
                 + track.name +
+            "</div>" +
+            "<div id='popup-date'>" +
+                month + " " + day + 
             "</div>" +
             "<div class='popup-detail'>" +
                 "<div class='item'>" +

@@ -24,12 +24,13 @@ const tracksLayer2018 = L.featureGroup();
 const tracksLayer2017 = L.featureGroup();
 const tracksLayer2016 = L.featureGroup();
 const tracksLayer2015 = L.featureGroup();
+const streetsLayer = L.featureGroup();
 
 const mapParams = {
     center: [61.160149, -149.96],
     zoomControl: false,
     zoom: 11.35,
-    layers: [tracksLayer2020, tracksLayer2019, tracksLayer2018, tracksLayer2017, tracksLayer2016, tracksLayer2015, Stadia_AlidadeSmoothDark]
+    layers: [tracksLayer2020, tracksLayer2019, tracksLayer2018, tracksLayer2017, tracksLayer2016, tracksLayer2015, streetsLayer, Stadia_AlidadeSmoothDark]
 }
 
 class Map extends React.Component {
@@ -38,6 +39,7 @@ class Map extends React.Component {
         dbscanSettings: PropTypes.object,
         dispatch: PropTypes.func.isRequired,
         tracks: PropTypes.array,
+        streets: PropTypes.array,
         tracks2019: PropTypes.array,
         accessToken: PropTypes.string
       }
@@ -139,9 +141,15 @@ class Map extends React.Component {
     }
 
     componentDidUpdate(prevProps) {
-        const { accessToken, dispatch, tracks, tracks2019, tracks2018, tracks2017, tracks2016, tracks2015,
-            tracksLoaded2020, tracksLoaded2019, tracksLoaded2018, tracksLoaded2017, tracksLoaded2016, tracksLoaded2015,
+        const { accessToken, dispatch, tracks, streets, tracks2019, tracks2018, tracks2017, tracks2016, tracks2015,
+            streetsLoaded, tracksLoaded2020, tracksLoaded2019, tracksLoaded2018, tracksLoaded2017, tracksLoaded2016, tracksLoaded2015,
             show2020Tracks, show2019Tracks, show2018Tracks, show2017Tracks, show2016Tracks, show2015Tracks } = this.props;
+
+        // STREETS LOADED
+
+        if (streetsLoaded === true) {
+            this.addStreets();
+        }
 
         // TRACKS LOADED
         if (accessToken !== "" && tracksLoaded2020 === false) {
@@ -229,6 +237,39 @@ class Map extends React.Component {
         } else {
             this.map.addLayer(tracksLayer2015);
         }
+    }
+
+    addStreets() {
+        streetsLayer.clearLayers();
+
+                const { streets } = this.props;
+
+                for (const street in streets) {
+
+                    if (streets.hasOwnProperty(street)) {
+
+                        const streetObj = streets[street];
+                        const geometry = JSON.parse(streetObj.st_asgeojson);
+
+                        var newGeoJson = {};
+                        newGeoJson.type = "Feature";
+                        newGeoJson.properties = {
+                            name: streetObj.street_nam,
+                            type: streetObj.street_sym
+                        };
+                        newGeoJson.geometry = geometry;
+
+                        var style = {
+                            "color": "#dfe6e9",
+                            "weight": 0.8
+                        };
+
+                        const newLine = L.geoJSON(newGeoJson, { style });
+                
+                        newLine.addTo(streetsLayer);
+                    }
+                }
+    
     }
 
     addTracks(year) {
@@ -383,17 +424,19 @@ class Map extends React.Component {
 }
 
 const mapStateToProps = state => {
-    const { accessToken, tracks, tracks2019, tracks2018, tracks2017, tracks2016, tracks2015,
-        tracksLoaded2020, tracksLoaded2019, tracksLoaded2018, tracksLoaded2017, tracksLoaded2016, tracksLoaded2015,
+    const { accessToken, tracks, streets, tracks2019, tracks2018, tracks2017, tracks2016, tracks2015,
+        streetsLoaded, tracksLoaded2020, tracksLoaded2019, tracksLoaded2018, tracksLoaded2017, tracksLoaded2016, tracksLoaded2015,
         show2020Tracks, show2019Tracks, show2018Tracks, show2017Tracks, show2016Tracks, show2015Tracks } = state.tracksReducer;
     return {
         accessToken,
         tracks,
+        streets,
         tracks2019,
         tracks2018,
         tracks2017,
         tracks2016,
         tracks2015,
+        streetsLoaded,
         tracksLoaded2020,
         tracksLoaded2019,
         tracksLoaded2018,

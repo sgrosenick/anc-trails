@@ -1,4 +1,5 @@
 export const CLEAR = 'CLEAR';
+export const LOAD_STREETS = 'LOAD_STREETS';
 export const LOAD_TRACKS = 'LOAD_TRACKS';
 export const GET_TOKEN = 'GET_TOKEN';
 export const SHOW_2020_TRACKS = 'REMOVE_2020_TRACKS';
@@ -46,6 +47,15 @@ export const getActivities = payload => (dispatch) => {
     .catch(error => console.log(error));
 }
 
+export const getStreets = () => (dispatch) => {
+  const url = new URL('https://anc-trails.herokuapp.com/api/streets');
+
+  return fetch(url)
+    .then(response => response.json())
+    .then(data => dispatch(processStreetsResponse(data)))
+    .catch(error => console.log(error));
+}
+
 export const getAccessToken = () => (dispatch) => {
 
   const authLink = new URL("https://www.strava.com/oauth/token");
@@ -85,6 +95,12 @@ export const clear = () => ({
     }
   }
 
+  const processStreetsResponse = (json) => (dispatch) => {
+    dispatch(loadStreets({
+      streets: json
+    }));
+  }
+
   const proccessTracksResponse = (json, year) => dispatch => {
     const results = parseTracksResponse(json);
 
@@ -93,6 +109,11 @@ export const clear = () => ({
       year: year
     }));
   }
+
+export const loadStreets = streets => ({
+  type: LOAD_STREETS,
+  payload: streets
+});
 
 export const loadTracks = tracks => ({
   type: LOAD_TRACKS,
