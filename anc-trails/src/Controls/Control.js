@@ -8,7 +8,7 @@ import Switch from '@material-ui/core/Switch';
 import '../index.scss';
 
 //Actions
-import { clear, getAccessToken, getStreets, toggle2020Tracks, toggle2019Tracks, toggle2018Tracks, toggle2017Tracks, toggle2016Tracks, toggle2015Tracks } from '../actions/actions';
+import { clear, getAccessToken, startUploadTracks, getStreets, runAnalysis, toggle2020Tracks, toggle2019Tracks, toggle2018Tracks, toggle2017Tracks, toggle2016Tracks, toggle2015Tracks } from '../actions/actions';
 
 //Custom Switches
 import { Track2020Switch, Track2019Switch, Track2018Switch, Track2017Switch, Track2016Switch, Track2015Switch }  from './Swtiches'
@@ -27,6 +27,16 @@ class Control extends React.Component {
       dispatch(getStreets())
     }
 
+    handleRunAnalysis = () => {
+      const { dispatch, analysisRunning } = this.props;
+      dispatch(runAnalysis({analysisRunning}))
+    }
+
+    handleUploadTracks = () => {
+      const { dispatch, tracksUploading } = this.props;
+      dispatch(startUploadTracks(tracksUploading));
+    }
+
     handleLoadTracksClick = () => {
       const { dispatch, accessToken } = this.props;
       dispatch(getAccessToken({token: accessToken}));
@@ -35,7 +45,7 @@ class Control extends React.Component {
     // and also what happens if we click the remove icon
     handleClickClear = () => {
       const { dispatch } = this.props
-      dispatch(clear())
+      dispatch(clear()) 
     }
 
     handleToggle2020Tracks = () => {
@@ -112,6 +122,12 @@ class Control extends React.Component {
             <Button color="primary" onClick={this.handleLoadStreets}>
               Load Streets
             </Button>
+            <Button color="primary" onClick={this.handleRunAnalysis}>
+              Run Analysis
+            </Button>
+            <Button color="primary" onClick={this.handleUploadTracks}>
+              Upload Tracks
+            </Button>
           </div>
         )
       }
@@ -119,9 +135,11 @@ class Control extends React.Component {
     
     // connecting this class component to our react store!
     const mapStateToProps = state => {
-      const { places, show2020Tracks, show2019Tracks, show2018Tracks, show2017Tracks, show2016Tracks, show2015Tracks } = state.tracksReducer
+      const { places, analysisRunning, tracksUploading, show2020Tracks, show2019Tracks, show2018Tracks, show2017Tracks, show2016Tracks, show2015Tracks } = state.tracksReducer
       return {
         places,
+        analysisRunning,
+        tracksUploading,
         show2020Tracks,
         show2019Tracks,
         show2018Tracks,

@@ -1,5 +1,8 @@
 export const CLEAR = 'CLEAR';
 export const LOAD_STREETS = 'LOAD_STREETS';
+export const RUN_ANALYSIS = 'RUN_ANALYSIS';
+export const TRACKS_UPLOADING = 'TRACKS_UPLOADING';
+export const UPLOAD_TRACKS = 'UPLOAD_TRACKS';
 export const LOAD_TRACKS = 'LOAD_TRACKS';
 export const GET_TOKEN = 'GET_TOKEN';
 export const SHOW_2020_TRACKS = 'REMOVE_2020_TRACKS';
@@ -56,6 +59,25 @@ export const getStreets = () => (dispatch) => {
     .catch(error => console.log(error));
 }
 
+export const startUploadTracks = (tracksUploading) => (dispatch) => {
+   dispatch(startUpload(tracksUploading));
+}
+
+export const uploadTracks = (tracks) => (dispatch) => {
+  const url = new URL('https://anc-trails.herokuapp.com/api/tracks');
+
+  return fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json;charset=utf-8'
+    },
+    body: tracks
+  })
+  .then(response => response.text())
+  .then(data => dispatch(processUploadTracksResponse(data)))
+  .catch(error => console.log(error));
+}
+
 export const getAccessToken = () => (dispatch) => {
 
   const authLink = new URL("https://www.strava.com/oauth/token");
@@ -95,6 +117,12 @@ export const clear = () => ({
     }
   }
 
+  const processUploadTracksResponse = json => dispatch => {
+    dispatch(uploadComplete({
+      tracks: json
+    }));
+  }
+
   const processStreetsResponse = (json) => (dispatch) => {
     dispatch(loadStreets({
       streets: json
@@ -113,6 +141,21 @@ export const clear = () => ({
 export const loadStreets = streets => ({
   type: LOAD_STREETS,
   payload: streets
+});
+
+export const runAnalysis = analysisRunning => ({
+  type: RUN_ANALYSIS,
+  payload: analysisRunning
+});
+
+export const startUpload = tracksUploading => ({
+  type: TRACKS_UPLOADING,
+  payload: tracksUploading
+});
+
+export const uploadComplete = tracks => ({
+  type: UPLOAD_TRACKS,
+  payload: tracks
 });
 
 export const loadTracks = tracks => ({

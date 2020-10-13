@@ -1,16 +1,19 @@
 import { combineReducers } from 'redux';
-import { LOAD_STREETS, LOAD_TRACKS, GET_TOKEN, SHOW_2020_TRACKS, SHOW_2019_TRACKS, SHOW_2018_TRACKS, SHOW_2017_TRACKS, SHOW_2016_TRACKS, SHOW_2015_TRACKS } from '../actions/actions';
+import { LOAD_STREETS, RUN_ANALYSIS, TRACKS_UPLOADING, UPLOAD_TRACKS, LOAD_TRACKS, GET_TOKEN, SHOW_2020_TRACKS, SHOW_2019_TRACKS, SHOW_2018_TRACKS, SHOW_2017_TRACKS, SHOW_2016_TRACKS, SHOW_2015_TRACKS } from '../actions/actions';
 
 const initalTracksState = {
     accessToken: "",
     streets: [],
     tracks: [],
+    uploadedTracks: [],
+    tracksUploading: false,
     tracks2019: [],
     tracks2018: [],
     tracks2017: [],
     tracks2016: [],
     tracks2015: [],
     streetsLoaded: false,
+    analysisRunning: false,
     tracksLoaded2020: false,
     tracksLoaded2019: false,
     tracksLoaded2018: false,
@@ -73,6 +76,22 @@ const tracksReducer = (state = initalTracksState, action) => {
                 ...state,
                 streets: action.payload.streets,
                 streetsLoaded: true
+            }
+        case RUN_ANALYSIS:
+            return {
+                ...state,
+                analysisRunning: true
+            }
+        case TRACKS_UPLOADING:
+            return {
+                ...state,
+                tracksUploading: true
+            }
+        case UPLOAD_TRACKS:
+            return {
+                ...state,
+                tracksUploading: false,
+                uploadedTracks: action.payload.tracks
             }
         case GET_TOKEN:
             return Object.assign({}, state, {

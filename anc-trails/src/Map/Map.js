@@ -2,11 +2,14 @@ import React from 'react';
 import L from 'leaflet';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { getAccessToken, getActivities, SHOW_2019_TRACKS } from '../actions/actions';
+import { getAccessToken, getActivities, uploadTracks, runAnalysis, SHOW_2019_TRACKS } from '../actions/actions';
 import { popupStyle } from './Popup';
-import { buffer } from '@turf/turf';
+import { buffer, intersect } from '@turf/turf';
+import shortid from 'shortid';
+//import { intersect } from '@turf/intersect';
 import 'polyline-encoded';
 import "../style/popup.scss"
+//import { intersect } from '@turf/intersect';
 
 const style = {
     width: '100%',
@@ -25,12 +28,16 @@ const tracksLayer2017 = L.featureGroup();
 const tracksLayer2016 = L.featureGroup();
 const tracksLayer2015 = L.featureGroup();
 const streetsLayer = L.featureGroup();
+const bufferedTracks = L.featureGroup();
+const bufferedStreets = L.featureGroup();
+const riddenStreets = L.featureGroup();
+
 
 const mapParams = {
     center: [61.160149, -149.96],
     zoomControl: false,
     zoom: 11.35,
-    layers: [tracksLayer2020, tracksLayer2019, tracksLayer2018, tracksLayer2017, tracksLayer2016, tracksLayer2015, streetsLayer, Stadia_AlidadeSmoothDark]
+    layers: [tracksLayer2020, tracksLayer2019, tracksLayer2018, tracksLayer2017, tracksLayer2016, tracksLayer2015, streetsLayer, riddenStreets, Stadia_AlidadeSmoothDark]
 }
 
 class Map extends React.Component {
@@ -49,9 +56,6 @@ class Map extends React.Component {
 
         this.map = L.map('map', mapParams);
 
-        this.map.on('moveend', () => {
-            //dispatch(doUpdateBoundingBox(this.map.getBounds()));
-        });
         this.map.on('click', function(e) {
             tracksLayer2020.setStyle({color: process.env.REACT_APP_TRACK_2020_COLOR, weight: 2});
             tracksLayer2019.setStyle({color: process.env.REACT_APP_TRACK_2019_COLOR, weight: 2});
@@ -141,14 +145,18 @@ class Map extends React.Component {
     }
 
     componentDidUpdate(prevProps) {
-        const { accessToken, dispatch, tracks, streets, tracks2019, tracks2018, tracks2017, tracks2016, tracks2015,
-            streetsLoaded, tracksLoaded2020, tracksLoaded2019, tracksLoaded2018, tracksLoaded2017, tracksLoaded2016, tracksLoaded2015,
+        const { accessToken, dispatch, tracks, streets, analysisRunning, tracks2019, tracks2018, tracks2017, tracks2016, tracks2015,
+            streetsLoaded, tracksUploading, tracksLoaded2020, tracksLoaded2019, tracksLoaded2018, tracksLoaded2017, tracksLoaded2016, tracksLoaded2015,
             show2020Tracks, show2019Tracks, show2018Tracks, show2017Tracks, show2016Tracks, show2015Tracks } = this.props;
 
         // STREETS LOADED
 
         if (streetsLoaded === true) {
             this.addStreets();
+        }
+
+        if (analysisRunning === true) {
+            this.analysis();
         }
 
         // TRACKS LOADED
@@ -174,6 +182,12 @@ class Map extends React.Component {
 
         if (accessToken !== "" && tracksLoaded2016 === true && tracksLoaded2015 === false) {
             dispatch(getActivities({token: accessToken, year: 2015}))
+        }
+
+        // UPLOAD TRACKS
+
+        if (tracksUploading !== false) {
+            this.uploadTracks();
         }
 
         // ADD TRACKS
@@ -254,6 +268,7 @@ class Map extends React.Component {
                         var newGeoJson = {};
                         newGeoJson.type = "Feature";
                         newGeoJson.properties = {
+                            street_id: streetObj.objectid,
                             name: streetObj.street_nam,
                             type: streetObj.street_sym
                         };
@@ -265,11 +280,114 @@ class Map extends React.Component {
                         };
 
                         const newLine = L.geoJSON(newGeoJson, { style });
+
                 
                         newLine.addTo(streetsLayer);
                     }
                 }
     
+    }
+
+    analysis() {
+        const { streets } = this.props;
+
+        tracksLayer2020.eachLayer(function(layer) {
+            var geojson = layer.toGeoJSON();
+
+            var buffered = buffer(geojson, 12, {units: 'feet'});
+
+            const bufferedLine = L.geoJSON(buffered, {
+                "color": "yellow"
+            });
+            bufferedLine.addTo(bufferedTracks);
+        });
+
+        streetsLayer.eachLayer(function(layer) {
+            var geojson = layer.toGeoJSON();
+
+            var buffered = buffer(geojson, 12, { units: 'feet' });
+            buffered.properties = geojson.features[0].properties;
+
+            const bufferedLine = L.geoJSON(buffered, {
+                "color": "orange"
+            });
+            bufferedLine.addTo(bufferedStreets);
+        });
+
+        bufferedStreets.eachLayer(function(layer) {
+            var geoJSONStreet = layer.toGeoJSON();
+
+            bufferedTracks.eachLayer(function(tracksLayer) {
+                var geoJSONTracks = tracksLayer.toGeoJSON();
+
+                var streetsGeometry = geoJSONStreet.features[0].geometry;
+                var tracksGeometry = geoJSONTracks.features[0].geometry;
+                
+                try {
+                    var intersectStreets = intersect(streetsGeometry, tracksGeometry);
+
+                    if (intersectStreets != null) {
+                        console.log(intersectStreets);
+
+                        layer.addTo(riddenStreets);
+                    }
+
+                } catch(error) {
+                    console.log(error)
+                }
+
+                console.log(intersectStreets);
+            });
+        });
+
+    }
+
+    uploadTracks() {
+        const { dispatch } = this.props;
+
+        var newTracks = [];
+
+        var layers = [tracksLayer2015];
+
+        for (var i = 0; i < layers.length; i++) {
+            layers[i].eachLayer(function(layer) {
+                var geoJSON = layer.toGeoJSON();
+    
+                var newGeom = {};
+                var type = geoJSON.features[0].geometry.type;
+                var coords = geoJSON.features[0].geometry.coordinates;
+                newGeom.type = type;
+                newGeom.coordinates = coords;
+                var coordinates = '"' + coords + '"';
+
+                var newLayer = {};
+                newLayer.id = shortid.generate();
+                newLayer.average_speed = geoJSON.features[0].properties.average_speed;
+                newLayer.max_speed = geoJSON.features[0].properties.max_speed;
+                newLayer.name = geoJSON.features[0].properties.name;
+                newLayer.distance = geoJSON.features[0].properties.distance;
+                newLayer.moving_time = geoJSON.features[0].properties.moving_time;
+                newLayer.start_date_local = geoJSON.features[0].properties.start_date_local;
+                newLayer.total_elevation_gain = geoJSON.features[0].properties.total_elevation_gain;
+                newLayer.type = geoJSON.features[0].properties.type;
+                newLayer.year = geoJSON.features[0].properties.year;
+                newLayer.achievement_count = geoJSON.features[0].properties.achievement_count;
+                newLayer.geometry = newGeom;
+                newLayer.pr_count = geoJSON.features[0].properties.pr_count;
+                newLayer.geom_type = type;
+                newLayer.geom_coords = coordinates;
+                //newLayer.max_heartrate = geoJSON.features[0].properties.max_heartrate;
+                //newLayer.average_heartrate = geoJSON.features[0].properties.average_heartrate;
+    
+                newTracks.push(newLayer);
+            });
+        }
+
+        var jsonTracks = JSON.stringify(newTracks);
+        console.log(jsonTracks);
+        //dispatch(uploadTracks(jsonTracks));
+        // var jsonArray = JSON.stringify({ ...newTracks });
+        // console.log('hi');
     }
 
     addTracks(year) {
@@ -283,7 +401,6 @@ class Map extends React.Component {
                 for (const track of tracks) {
                     if (track.type === "Ride") {
                         const coords = L.Polyline.fromEncoded(track.map.summary_polyline).getLatLngs();
-
                         const newLine = L.polyline(
                             coords,
                             {
@@ -291,10 +408,34 @@ class Map extends React.Component {
                                 weight: 2
                             }
                         );
-                
+
+                        var style = {
+                            "color": process.env.REACT_APP_TRACK_2020_COLOR,
+                            "weight": 2
+                        };
+                        
+                        const convertToGeojson = newLine.toGeoJSON();
+                        convertToGeojson.properties = {
+                            average_speed: track.average_speed,
+                            max_speed: track.max_speed,
+                            name: track.name,
+                            distance: track.distance,
+                            moving_time: track.moving_time,
+                            start_date_local: track.start_date_local,
+                            total_elevation_gain: track.total_elevation_gain,
+                            type: track.type,
+                            year: 2020,
+                            achievement_count: track.achievement_count,
+                            pr_count: track.pr_count,
+                            max_heartrate: track.max_heartrate,
+                            average_heartrate: track.average_heartrate
+                        };
+                        
+                        const newTrack = L.geoJSON(convertToGeojson, { style });
+
                         const popupText = popupStyle(track);
-                        newLine.bindPopup(popupText);
-                        newLine.addTo(tracksLayer2020);
+                        newTrack.bindPopup(popupText);
+                        newTrack.addTo(tracksLayer2020);
                     }
                 }
                 break;
@@ -306,7 +447,6 @@ class Map extends React.Component {
                 for (const track of tracks2019) {
                     if (track.type === "Ride") {
                         const coords = L.Polyline.fromEncoded(track.map.summary_polyline).getLatLngs();
-
                         const newLine = L.polyline(
                             coords,
                             {
@@ -314,10 +454,47 @@ class Map extends React.Component {
                                 weight: 2
                             }
                         );
+
+                        var style = {
+                            "color": process.env.REACT_APP_TRACK_2019_COLOR,
+                            "weight": 2
+                        };
                         
+                        const convertToGeojson = newLine.toGeoJSON();
+                        convertToGeojson.properties = {
+                            average_speed: track.average_speed,
+                            max_speed: track.max_speed,
+                            name: track.name,
+                            distance: track.distance,
+                            moving_time: track.moving_time,
+                            start_date_local: track.start_date_local,
+                            total_elevation_gain: track.total_elevation_gain,
+                            type: track.type,
+                            year: 2020,
+                            achievement_count: track.achievement_count,
+                            pr_count: track.pr_count,
+                            max_heartrate: track.max_heartrate,
+                            average_heartrate: track.average_heartrate
+                        };
+                        
+                        const newTrack = L.geoJSON(convertToGeojson, { style });
+
                         const popupText = popupStyle(track);
-                        newLine.bindPopup(popupText);
-                        newLine.addTo(tracksLayer2019);
+                        newTrack.bindPopup(popupText);
+                        newTrack.addTo(tracksLayer2019);
+
+
+                        // const newLine = L.polyline(
+                        //     coords,
+                        //     {
+                        //         color: process.env.REACT_APP_TRACK_2019_COLOR,
+                        //         weight: 2
+                        //     }
+                        // );
+                        
+                        // const popupText = popupStyle(track);
+                        // newLine.bindPopup(popupText);
+                        // newLine.addTo(tracksLayer2019);
                     }
                 }
                 break;
@@ -329,7 +506,6 @@ class Map extends React.Component {
                 for (const track of tracks2018) {
                     if (track.type === "Ride") {
                         const coords = L.Polyline.fromEncoded(track.map.summary_polyline).getLatLngs();
-
                         const newLine = L.polyline(
                             coords,
                             {
@@ -337,10 +513,47 @@ class Map extends React.Component {
                                 weight: 2
                             }
                         );
-            
+
+                        var style = {
+                            "color": process.env.REACT_APP_TRACK_2018_COLOR,
+                            "weight": 2
+                        };
+                        
+                        const convertToGeojson = newLine.toGeoJSON();
+                        convertToGeojson.properties = {
+                            average_speed: track.average_speed,
+                            max_speed: track.max_speed,
+                            name: track.name,
+                            distance: track.distance,
+                            moving_time: track.moving_time,
+                            start_date_local: track.start_date_local,
+                            total_elevation_gain: track.total_elevation_gain,
+                            type: track.type,
+                            year: 2020,
+                            achievement_count: track.achievement_count,
+                            pr_count: track.pr_count,
+                            max_heartrate: track.max_heartrate,
+                            average_heartrate: track.average_heartrate
+                        };
+                        
+                        const newTrack = L.geoJSON(convertToGeojson, { style });
+
                         const popupText = popupStyle(track);
-                        newLine.bindPopup(popupText);
-                        newLine.addTo(tracksLayer2018);
+                        newTrack.bindPopup(popupText);
+                        newTrack.addTo(tracksLayer2018);
+
+
+                        // const newLine = L.polyline(
+                        //     coords,
+                        //     {
+                        //         color: process.env.REACT_APP_TRACK_2018_COLOR,
+                        //         weight: 2
+                        //     }
+                        // );
+            
+                        // const popupText = popupStyle(track);
+                        // newLine.bindPopup(popupText);
+                        // newLine.addTo(tracksLayer2018);
                     }
                 }
                 break;
@@ -352,7 +565,6 @@ class Map extends React.Component {
                 for (const track of tracks2017) {
                     if (track.type === "Ride") {
                         const coords = L.Polyline.fromEncoded(track.map.summary_polyline).getLatLngs();
-
                         const newLine = L.polyline(
                             coords,
                             {
@@ -360,10 +572,47 @@ class Map extends React.Component {
                                 weight: 2
                             }
                         );
-            
+
+                        var style = {
+                            "color": process.env.REACT_APP_TRACK_2017_COLOR,
+                            "weight": 2
+                        };
+                        
+                        const convertToGeojson = newLine.toGeoJSON();
+                        convertToGeojson.properties = {
+                            average_speed: track.average_speed,
+                            max_speed: track.max_speed,
+                            name: track.name,
+                            distance: track.distance,
+                            moving_time: track.moving_time,
+                            start_date_local: track.start_date_local,
+                            total_elevation_gain: track.total_elevation_gain,
+                            type: track.type,
+                            year: 2020,
+                            achievement_count: track.achievement_count,
+                            pr_count: track.pr_count,
+                            max_heartrate: track.max_heartrate,
+                            average_heartrate: track.average_heartrate
+                        };
+                        
+                        const newTrack = L.geoJSON(convertToGeojson, { style });
+
                         const popupText = popupStyle(track);
-                        newLine.bindPopup(popupText);
-                        newLine.addTo(tracksLayer2017);
+                        newTrack.bindPopup(popupText);
+                        newTrack.addTo(tracksLayer2017);
+
+
+                        // const newLine = L.polyline(
+                        //     coords,
+                        //     {
+                        //         color: process.env.REACT_APP_TRACK_2017_COLOR,
+                        //         weight: 2
+                        //     }
+                        // );
+            
+                        // const popupText = popupStyle(track);
+                        // newLine.bindPopup(popupText);
+                        // newLine.addTo(tracksLayer2017);
                     }
                 }
                 break;
@@ -375,7 +624,6 @@ class Map extends React.Component {
                 for (const track of tracks2016) {
                     if (track.type === "Ride") {
                         const coords = L.Polyline.fromEncoded(track.map.summary_polyline).getLatLngs();
-
                         const newLine = L.polyline(
                             coords,
                             {
@@ -383,10 +631,47 @@ class Map extends React.Component {
                                 weight: 2
                             }
                         );
+
+                        var style = {
+                            "color": process.env.REACT_APP_TRACK_2016_COLOR,
+                            "weight": 2
+                        };
+                        
+                        const convertToGeojson = newLine.toGeoJSON();
+                        convertToGeojson.properties = {
+                            average_speed: track.average_speed,
+                            max_speed: track.max_speed,
+                            name: track.name,
+                            distance: track.distance,
+                            moving_time: track.moving_time,
+                            start_date_local: track.start_date_local,
+                            total_elevation_gain: track.total_elevation_gain,
+                            type: track.type,
+                            year: 2020,
+                            achievement_count: track.achievement_count,
+                            pr_count: track.pr_count,
+                            max_heartrate: track.max_heartrate,
+                            average_heartrate: track.average_heartrate
+                        };
+                        
+                        const newTrack = L.geoJSON(convertToGeojson, { style });
+
+                        const popupText = popupStyle(track);
+                        newTrack.bindPopup(popupText);
+                        newTrack.addTo(tracksLayer2016);
+
+
+                        // const newLine = L.polyline(
+                        //     coords,
+                        //     {
+                        //         color: process.env.REACT_APP_TRACK_2016_COLOR,
+                        //         weight: 2
+                        //     }
+                        // );
                 
-                        const popupText = popupStyle(track); 
-                        newLine.bindPopup(popupText);
-                        newLine.addTo(tracksLayer2016);
+                        // const popupText = popupStyle(track); 
+                        // newLine.bindPopup(popupText);
+                        // newLine.addTo(tracksLayer2016);
                     }
                 }
                 break;
@@ -398,7 +683,6 @@ class Map extends React.Component {
                 for (const track of tracks2015) {
                     if (track.type === "Ride") {
                         const coords = L.Polyline.fromEncoded(track.map.summary_polyline).getLatLngs();
-
                         const newLine = L.polyline(
                             coords,
                             {
@@ -406,10 +690,47 @@ class Map extends React.Component {
                                 weight: 2
                             }
                         );
+
+                        var style = {
+                            "color": process.env.REACT_APP_TRACK_2015_COLOR,
+                            "weight": 2
+                        };
                         
+                        const convertToGeojson = newLine.toGeoJSON();
+                        convertToGeojson.properties = {
+                            average_speed: track.average_speed,
+                            max_speed: track.max_speed,
+                            name: track.name,
+                            distance: track.distance,
+                            moving_time: track.moving_time,
+                            start_date_local: track.start_date_local,
+                            total_elevation_gain: track.total_elevation_gain,
+                            type: track.type,
+                            year: 2020,
+                            achievement_count: track.achievement_count,
+                            pr_count: track.pr_count,
+                            max_heartrate: track.max_heartrate,
+                            average_heartrate: track.average_heartrate
+                        };
+                        
+                        const newTrack = L.geoJSON(convertToGeojson, { style });
+
                         const popupText = popupStyle(track);
-                        newLine.bindPopup(popupText);
-                        newLine.addTo(tracksLayer2015);
+                        newTrack.bindPopup(popupText);
+                        newTrack.addTo(tracksLayer2015);
+
+
+                        // const newLine = L.polyline(
+                        //     coords,
+                        //     {
+                        //         color: process.env.REACT_APP_TRACK_2015_COLOR,
+                        //         weight: 2
+                        //     }
+                        // );
+                        
+                        // const popupText = popupStyle(track);
+                        // newLine.bindPopup(popupText);
+                        // newLine.addTo(tracksLayer2015);
                     }
                 }
                 break;
@@ -424,19 +745,21 @@ class Map extends React.Component {
 }
 
 const mapStateToProps = state => {
-    const { accessToken, tracks, streets, tracks2019, tracks2018, tracks2017, tracks2016, tracks2015,
-        streetsLoaded, tracksLoaded2020, tracksLoaded2019, tracksLoaded2018, tracksLoaded2017, tracksLoaded2016, tracksLoaded2015,
+    const { accessToken, tracks, analysisRunning, streets, tracks2019, tracks2018, tracks2017, tracks2016, tracks2015,
+        streetsLoaded, tracksUploading, tracksLoaded2020, tracksLoaded2019, tracksLoaded2018, tracksLoaded2017, tracksLoaded2016, tracksLoaded2015,
         show2020Tracks, show2019Tracks, show2018Tracks, show2017Tracks, show2016Tracks, show2015Tracks } = state.tracksReducer;
     return {
         accessToken,
         tracks,
         streets,
+        analysisRunning,
         tracks2019,
         tracks2018,
         tracks2017,
         tracks2016,
         tracks2015,
         streetsLoaded,
+        tracksUploading,
         tracksLoaded2020,
         tracksLoaded2019,
         tracksLoaded2018,
