@@ -1,5 +1,6 @@
 @import '~leaflet/dist/leaflet.css';
 @import '~tachyons/css/tachyons.css';
+@import './style/theme.scss';
 
 body {
   margin: 0;
@@ -7,17 +8,32 @@ body {
 }
 
 .map-container {
-  display: flex;
+  //display: flex;
+}
+
+#header {
+  height: 80px;
+  background-color: $midnight-blue-80;
 }
 
 .control-area {
-  width: 350px;
-  height: 100vh;
-  padding: 20px;
-  background-color: #34495e;
-  font-family: 'Rubik', sans-serif;
+  // width: 350px;
+  // height: 100vh;
+  // padding: 20px;
+  // background-color: #34495e;
+  // font-family: 'Rubik', sans-serif;
+  z-index: 999;
+  position: absolute;
+  width: 300px;
+  top: 98px;
+  left: 16px;
+  max-height: calc(100vh - 3vw);
+  overflow: auto;
+  padding: 12px;
+  background-color: #314a63;
 }
 
 .MuiTypography-body1{
-  font-family: 'Rubik', sans-serif;
+  font-family: 'Neue Plak', sans-serif;
+  color: #ced6e0;
 }
