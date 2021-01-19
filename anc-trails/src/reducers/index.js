@@ -1,23 +1,29 @@
 import { combineReducers } from 'redux';
-import { LOAD_STREETS, LOAD_TRACKS, GET_TOKEN, SHOW_2020_TRACKS, SHOW_2019_TRACKS, SHOW_2018_TRACKS, SHOW_2017_TRACKS, SHOW_2016_TRACKS, SHOW_2015_TRACKS } from '../actions/actions';
+import { LOAD_STREETS, RUN_ANALYSIS, TRACKS_UPLOADING, UPLOAD_TRACKS, LOAD_TRACKS, GET_TOKEN, SHOW_2021_TRACKS, SHOW_2020_TRACKS, SHOW_2019_TRACKS, SHOW_2018_TRACKS, SHOW_2017_TRACKS, SHOW_2016_TRACKS, SHOW_2015_TRACKS } from '../actions/actions';
 
 const initalTracksState = {
     accessToken: "",
     streets: [],
     tracks: [],
+    uploadedTracks: [],
+    tracksUploading: false,
+    tracks2021: [],
     tracks2019: [],
     tracks2018: [],
     tracks2017: [],
     tracks2016: [],
     tracks2015: [],
     streetsLoaded: false,
+    analysisRunning: false,
+    tracksLoaded2021: false,
     tracksLoaded2020: false,
     tracksLoaded2019: false,
     tracksLoaded2018: false,
     tracksLoaded2017: false,
     tracksLoaded2016: false,
     tracksLoaded2015: false,
-    show2020Tracks: true,
+    show2021Tracks: true,
+    show2020Tracks: false,
     show2019Tracks: false,
     show2018Tracks: false,
     show2017Tracks: false,
@@ -29,6 +35,12 @@ const tracksReducer = (state = initalTracksState, action) => {
     switch(action.type) {
         case LOAD_TRACKS:
             switch(action.payload.year) {
+                case 2021:
+                    return {
+                        ...state,
+                        tracks2021: action.payload.tracks,
+                        tracksLoaded2021: true
+                    }
                 case 2020:
                     return {
                         ...state,
@@ -74,10 +86,31 @@ const tracksReducer = (state = initalTracksState, action) => {
                 streets: action.payload.streets,
                 streetsLoaded: true
             }
+        case RUN_ANALYSIS:
+            return {
+                ...state,
+                analysisRunning: true
+            }
+        case TRACKS_UPLOADING:
+            return {
+                ...state,
+                tracksUploading: true
+            }
+        case UPLOAD_TRACKS:
+            return {
+                ...state,
+                tracksUploading: false,
+                uploadedTracks: action.payload.tracks
+            }
         case GET_TOKEN:
             return Object.assign({}, state, {
                 accessToken: action.payload.token
             })
+        case SHOW_2021_TRACKS:
+            return {
+                ...state,
+                show2021Tracks: !action.payload.show2021Tracks
+            }
         case SHOW_2020_TRACKS:
             return {
                 ...state,
