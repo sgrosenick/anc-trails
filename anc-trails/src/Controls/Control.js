@@ -8,10 +8,10 @@ import Switch from '@material-ui/core/Switch';
 import '../index.scss';
 
 //Actions
-import { clear, getAccessToken, startUploadTracks, getStreets, runAnalysis, toggle2020Tracks, toggle2019Tracks, toggle2018Tracks, toggle2017Tracks, toggle2016Tracks, toggle2015Tracks } from '../actions/actions';
+import { clear, getAccessToken, startUploadTracks, getStreets, runAnalysis, toggle2021Tracks, toggle2020Tracks, toggle2019Tracks, toggle2018Tracks, toggle2017Tracks, toggle2016Tracks, toggle2015Tracks } from '../actions/actions';
 
 //Custom Switches
-import { Track2020Switch, Track2019Switch, Track2018Switch, Track2017Switch, Track2016Switch, Track2015Switch }  from './Swtiches'
+import { Track2021Switch, Track2020Switch, Track2019Switch, Track2018Switch, Track2017Switch, Track2016Switch, Track2015Switch }  from './Swtiches'
 
   
   
@@ -46,6 +46,11 @@ class Control extends React.Component {
     handleClickClear = () => {
       const { dispatch } = this.props
       dispatch(clear()) 
+    }
+
+    handleToggle2021Tracks = () => {
+      const { dispatch, show2021Tracks } = this.props;
+      dispatch(toggle2021Tracks({show2021Tracks}));
     }
 
     handleToggle2020Tracks = () => {
@@ -83,6 +88,12 @@ class Control extends React.Component {
         return (
           <div className="control-area">
             <h2>Legend</h2>
+            <FormGroup>
+              <FormControlLabel
+                control={<Track2021Switch checked={this.props.show2021Tracks} onChange={this.handleToggle2021Tracks} />}
+                label="2021 Tracks">
+              </FormControlLabel>
+            </FormGroup>
             <FormGroup>
               <FormControlLabel
                 control={<Track2020Switch checked={this.props.show2020Tracks} onChange={this.handleToggle2020Tracks} />}
@@ -135,11 +146,12 @@ class Control extends React.Component {
     
     // connecting this class component to our react store!
     const mapStateToProps = state => {
-      const { places, analysisRunning, tracksUploading, show2020Tracks, show2019Tracks, show2018Tracks, show2017Tracks, show2016Tracks, show2015Tracks } = state.tracksReducer
+      const { places, analysisRunning, tracksUploading, show2021Tracks, show2020Tracks, show2019Tracks, show2018Tracks, show2017Tracks, show2016Tracks, show2015Tracks } = state.tracksReducer
       return {
         places,
         analysisRunning,
         tracksUploading,
+        show2021Tracks,
         show2020Tracks,
         show2019Tracks,
         show2018Tracks,

@@ -5,6 +5,7 @@ export const TRACKS_UPLOADING = 'TRACKS_UPLOADING';
 export const UPLOAD_TRACKS = 'UPLOAD_TRACKS';
 export const LOAD_TRACKS = 'LOAD_TRACKS';
 export const GET_TOKEN = 'GET_TOKEN';
+export const SHOW_2021_TRACKS = 'SHOW_2021_TRACKS';
 export const SHOW_2020_TRACKS = 'REMOVE_2020_TRACKS';
 export const SHOW_2019_TRACKS = 'SHOW_2019_TRACKS';
 export const SHOW_2018_TRACKS = 'SHOW_2018_TRACKS';
@@ -14,7 +15,8 @@ export const SHOW_2015_TRACKS = 'SHOW_2015_TRACKS';
 
 export const getActivities = payload => (dispatch) => {
 
-  const url2020 = new URL('https://www.strava.com/api/v3/athlete/activities?after=1577836800&per_page=200&access_token=');
+  const url2021 = new URL('https://www.strava.com/api/v3/athlete/activities?after=1609545600&per_page=200&access_token=');
+  const url2020 = new URL('https://www.strava.com/api/v3/athlete/activities?before=1609545600&after=1577836800&per_page=200&access_token=');
   const url2019 = new URL('https://www.strava.com/api/v3/athlete/activities?before=1577750400&after=1546300800&per_page=200&access_token=');
   const url2018 = new URL('https://www.strava.com/api/v3/athlete/activities?before=1546214400&after=1514764800&per_page=200&access_token=');
   const url2017 = new URL('https://www.strava.com/api/v3/athlete/activities?before=1514678400&after=1483228800&per_page=200&access_token=');
@@ -24,6 +26,9 @@ export const getActivities = payload => (dispatch) => {
   var url = new URL('https://www.strava.com/api/v3/athlete/activities?after=1577836800&per_page=200&access_token=');
 
   switch(payload.year) {
+    case 2021:
+      url = url2021 + payload.token;
+      break;
     case 2020:
       url = url2020 + payload.token;
       break;
@@ -103,40 +108,40 @@ export const clear = () => ({
     type: CLEAR
   })
 
-  const processAccessTokenResponse = json => dispatch => {
-    const token = json.access_token;
-
-      dispatch(getToken({
-        token: token
-      }));
-  }
-
-  const parseTracksResponse = json => {
-    if (json.results && json.results.items.length > 0) {
-      return json.results.items;
-    }
-  }
-
-  const processUploadTracksResponse = json => dispatch => {
-    dispatch(uploadComplete({
-      tracks: json
+const processAccessTokenResponse = json => dispatch => {
+  const token = json.access_token;
+ 
+    dispatch(getToken({
+      token: token
     }));
-  }
+}
 
-  const processStreetsResponse = (json) => (dispatch) => {
-    dispatch(loadStreets({
-      streets: json
-    }));
+const parseTracksResponse = json => {
+  if (json.results && json.results.items.length > 0) {
+    return json.results.items;
   }
+}
 
-  const proccessTracksResponse = (json, year) => dispatch => {
-    const results = parseTracksResponse(json);
+const processUploadTracksResponse = json => dispatch => {
+  dispatch(uploadComplete({
+    tracks: json
+  }));
+}
 
-    dispatch(loadTracks({
-      tracks: json,
-      year: year
-    }));
-  }
+const processStreetsResponse = (json) => (dispatch) => {
+  dispatch(loadStreets({
+    streets: json
+  }));
+}
+
+const proccessTracksResponse = (json, year) => dispatch => {
+  const results = parseTracksResponse(json);
+
+  dispatch(loadTracks({
+    tracks: json,
+    year: year
+  }));
+}
 
 export const loadStreets = streets => ({
   type: LOAD_STREETS,
@@ -167,6 +172,11 @@ export const getToken = token =>({
   type: GET_TOKEN,
   payload: token
 })
+
+export const toggle2021Tracks = toggle => ({
+  type: SHOW_2021_TRACKS,
+  payload: toggle
+});
 
 export const toggle2020Tracks = toggle => ({
   type: SHOW_2020_TRACKS,
