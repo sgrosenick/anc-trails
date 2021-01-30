@@ -6,10 +6,9 @@ import { getAccessToken, getActivities, uploadTracks, runAnalysis, SHOW_2019_TRA
 import { popupStyle } from './Popup';
 import { buffer, intersect } from '@turf/turf';
 import shortid from 'shortid';
-//import { intersect } from '@turf/intersect';
 import 'polyline-encoded';
 import "../style/popup.scss"
-//import { intersect } from '@turf/intersect';
+
 
 const style = {
     width: '100%',
@@ -35,7 +34,7 @@ const riddenStreets = L.featureGroup();
 
 
 const mapParams = {
-    center: [61.166, -149.90],
+    center: [61.16, -150.0],
     zoomControl: false,
     zoom: 11.49,
     layers: [tracksLayer2021, tracksLayer2020, tracksLayer2019, tracksLayer2018, tracksLayer2017, tracksLayer2016, tracksLayer2015, streetsLayer, riddenStreets, Stadia_AlidadeSmoothDark]
@@ -216,9 +215,9 @@ class Map extends React.Component {
 
         dispatch(getAccessToken());
 
-        L.control.zoom({
-            position: 'topright'
-        }).addTo(this.map);
+        // L.control.zoom({
+        //     position: 'topright'
+        // }).addTo(this.map);
     }
 
     componentDidUpdate(prevProps) {
@@ -508,7 +507,14 @@ class Map extends React.Component {
 
                 console.log("2021 Track Total: " + tracks2021.length);
 
-                let totalMiles2021 = 0; 
+                let totalMiles2021 = 0;
+                let totalRides = tracks2021.length;
+                let longestRide = {
+                    "distance": 0
+                }
+                let shortestRide = {
+                    "distance": 1000
+                }
 
                 for (const track of tracks2021) {
                     if (track.type === "Ride") {
@@ -546,6 +552,14 @@ class Map extends React.Component {
                             max_heartrate: track.max_heartrate,
                             average_heartrate: track.average_heartrate
                         };
+
+                        if (distance > longestRide.distance) {
+                            longestRide.distance = distance;
+                        }
+
+                        if (distance < shortestRide.distance) {
+                            shortestRide.distance = distance;
+                        }
 
                         const popupText = popupStyle(track);
                         newLine.bindPopup(popupText);
