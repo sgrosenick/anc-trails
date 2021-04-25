@@ -18,6 +18,13 @@
     color: #ecf0f1;
 }
 
+.popup-container {
+    margin: 12px;
+    background-color: #34495e;
+    color: #ecf0f1;
+    font-family: 'Rubik', sans-serif;
+}
+
 #tracks-popup {
     display: flex;
     flex-direction: column;
@@ -41,12 +48,13 @@
 .popup-detail {
     display: grid;
     grid-template-columns: 26% 8% 26% 8% 32%;
+    margin-top: 10px;
 }
 
 .popup-title {
     grid-column: span 12;
     padding-bottom: 8px;
-    font-size: small;
+    font-size: medium;
     font-weight: 600;
 }
 
@@ -58,10 +66,11 @@
 
 .item-label {
     font-size: x-small;
+    margin-bottom: 2px;
 }
 
 .item-data {
-    font-size: medium;
+    font-size: large;
     font-weight: 400;
     white-space: nowrap;
 }

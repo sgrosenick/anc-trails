@@ -28,3 +28,49 @@ body {
 .MuiTypography-body1{
   font-family: 'Rubik', sans-serif;
 }
+
+#static-popup {
+  height: 100px;
+  width: 300px;
+  background-color: #34495e;
+  position: absolute;
+  right: 0;
+  top: 0;
+  margin: 20px;
+  z-index: 999;
+  font-family: 'Rubik', sans-serif;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.popup-2021 {
+  border-left: 7px solid #FC427B;
+}
+
+.popup-2020 {
+  border-left: 7px solid #26de81;
+}
+
+.popup-2019 {
+  border-left: 7px solid #fed330;
+}
+
+.popup-2018 {
+  border-left: 7px solid #fd9644;
+}
+
+.popup-2017 {
+  border-left: 7px solid #00a8ff;
+}
+
+.popup-2016 {
+  border-left: 7px solid #a55eea;
+}
+
+.popup-2015 {
+  border-left: 7px solid #4834d4;
+}
+
+.popup-empty {
+  display: none;
+}

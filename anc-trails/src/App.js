@@ -6,6 +6,7 @@ function App() {
   return (
     <div className="map-container">
       <CustomAccordion />
+      <div id="static-popup" className="popup-empty"></div>
       <Map />
     </div>
   );
