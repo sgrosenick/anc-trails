@@ -86,8 +86,7 @@ class Control extends React.Component {
     render() {
         
         return (
-          <div className="control-area">
-            <h2>Legend</h2>
+          <div className="layer-controls">
             <FormGroup>
               <FormControlLabel
                 control={<Track2021Switch checked={this.props.show2021Tracks} onChange={this.handleToggle2021Tracks} />}
@@ -130,7 +129,7 @@ class Control extends React.Component {
                 label="2015 Tracks">
               </FormControlLabel>
             </FormGroup>
-            <Button color="primary" onClick={this.handleLoadStreets}>
+            {/* <Button color="primary" onClick={this.handleLoadStreets}>
               Load Streets
             </Button>
             <Button color="primary" onClick={this.handleRunAnalysis}>
@@ -138,7 +137,7 @@ class Control extends React.Component {
             </Button>
             <Button color="primary" onClick={this.handleUploadTracks}>
               Upload Tracks
-            </Button>
+            </Button> */}
           </div>
         )
       }
