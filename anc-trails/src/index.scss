@@ -8,17 +8,21 @@ body {
 
 .control-area {
   position: absolute;
-  margin: 20px;
-  margin-bottom: 20px;
+  margin: 12px;
   z-index: 999;
-  width: 325px;
+  width: 300px;
   height: calc(100vh - 40px);
   max-height: 600px;
   //padding: 20px;
   background-color: #34495e;
   font-family: 'Rubik', sans-serif;
   border-radius: 8px;
+
+  h3 {
+    text-align: center;
+  }
 }
+
 
 .layer-controls {
   background-color: #34495e;
