@@ -11,10 +11,26 @@ import 'polyline-encoded';
 import "../style/popup.scss"
 //import { intersect } from '@turf/intersect';
 
+import Modal from 'react-modal';
+import LoginForm from '../components/LoginForm';
+
 const style = {
     width: '100%',
     height: '100vh'
 };
+
+const modalStyles = {
+    content: {
+      top: '50%',
+      left: '50%',
+      right: 'auto',
+      bottom: 'auto',
+      marginRight: '-50%',
+      transform: 'translate(-50%, -50%)',
+    },
+};
+
+let isModalOpen = false;
 
 const Stadia_AlidadeSmoothDark = L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png', {
         maxZoom: 20,
@@ -50,6 +66,14 @@ class Map extends React.Component {
         streets: PropTypes.array,
         tracks2019: PropTypes.array,
         accessToken: PropTypes.string
+    }
+
+    afterOpenModal() {
+        
+    }
+
+    closeModal() {
+
     }
 
     componentDidMount() {
@@ -214,11 +238,13 @@ class Map extends React.Component {
             tracksLayer2015.getLayer(selectedId).setStyle({color: process.env.REACT_APP_TRACK_2015_HIGHLIGHT, weight: 4}).bringToFront();
         });
 
-        dispatch(getAccessToken());
+        //dispatch(getAccessToken());
 
         L.control.zoom({
             position: 'topright'
         }).addTo(this.map);
+
+        setTimeout( () => { isModalOpen = true; }, 2000 );
     }
 
     componentDidUpdate(prevProps) {
@@ -926,7 +952,17 @@ class Map extends React.Component {
     }
 
     render() {
-        return <div id='map' style={style} />
+        return (
+        <div style={style}>
+            <Modal
+                isOpen={true}
+                onAfterClose={this.afterOpenModal}
+                style={modalStyles}>
+                <LoginForm />
+            </Modal>
+            <div id='map' style={style}></div>
+        </div>
+        );
     }
 }
 
