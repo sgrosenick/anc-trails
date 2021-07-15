@@ -6,10 +6,9 @@ import { getAccessToken, getActivities, uploadTracks, runAnalysis, SHOW_2019_TRA
 import { popupStyle } from './Popup';
 import { buffer, intersect } from '@turf/turf';
 import shortid from 'shortid';
-//import { intersect } from '@turf/intersect';
 import 'polyline-encoded';
 import "../style/popup.scss"
-//import { intersect } from '@turf/intersect';
+
 
 import Modal from 'react-modal';
 import LoginForm from '../components/LoginForm';
@@ -51,7 +50,7 @@ const riddenStreets = L.featureGroup();
 
 
 const mapParams = {
-    center: [61.166, -149.90],
+    center: [61.16, -150.0],
     zoomControl: false,
     zoom: 11.49,
     layers: [tracksLayer2021, tracksLayer2020, tracksLayer2019, tracksLayer2018, tracksLayer2017, tracksLayer2016, tracksLayer2015, streetsLayer, riddenStreets, Stadia_AlidadeSmoothDark]
@@ -97,6 +96,9 @@ class Map extends React.Component {
             tracksLayer2017.setStyle({color: process.env.REACT_APP_TRACK_2017_COLOR, weight: 2});
             tracksLayer2016.setStyle({color: process.env.REACT_APP_TRACK_2016_COLOR, weight: 2});
             tracksLayer2015.setStyle({color: process.env.REACT_APP_TRACK_2015_COLOR, weight: 2});
+            let popupContainer = document.getElementById("static-popup");
+            popupContainer.innerHTML = "";
+            popupContainer.className = "popup-empty";
         });
 
         function deemphasizeLayers() {
@@ -136,7 +138,6 @@ class Map extends React.Component {
                         lyr.setStyle({color: newColor, weight: 2});
                     })
                 }
-                console.log('hi');
             });
         };
 
@@ -152,6 +153,12 @@ class Map extends React.Component {
                 }
             });
 
+            // Set popup content
+            let popupContainer = document.getElementById("static-popup");
+            popupContainer.innerHTML = e.layer._popup._content;
+            popupContainer.className = "popup-2021";
+            e.layer.closePopup();
+
             tracksLayer2021.getLayer(selectedId).setStyle({color: process.env.REACT_APP_TRACK_2021_HIGHLIGHT, weight: 4}).bringToFront();
         });
         
@@ -166,6 +173,12 @@ class Map extends React.Component {
                     layer.setStyle({color: process.env.REACT_APP_TRACK_2020_DEEMPHASIZE, weight: 2});
                 }
             });
+            
+            // Set popup content
+            let popupContainer = document.getElementById("static-popup");
+            popupContainer.innerHTML = e.layer._popup._content;
+            popupContainer.className = "popup-2020";
+            e.layer.closePopup();
 
             tracksLayer2020.getLayer(selectedId).setStyle({color: process.env.REACT_APP_TRACK_2020_HIGHLIGHT, weight: 4}).bringToFront();
         });
@@ -180,6 +193,12 @@ class Map extends React.Component {
                     layer.setStyle({color: process.env.REACT_APP_TRACK_2019_DEEMPHASIZE, weight: 2});
                 }
             });
+
+            // Set popup content
+            let popupContainer = document.getElementById("static-popup");
+            popupContainer.innerHTML = e.layer._popup._content;
+            popupContainer.className = "popup-2019";
+            e.layer.closePopup();
 
             tracksLayer2019.getLayer(selectedId).setStyle({color: process.env.REACT_APP_TRACK_2019_HIGHLIGHT, weight: 4}).bringToFront();
         });
@@ -196,6 +215,12 @@ class Map extends React.Component {
                 }
             });
 
+            // Set popup content
+            let popupContainer = document.getElementById("static-popup");
+            popupContainer.innerHTML = e.layer._popup._content;
+            popupContainer.className = "popup-2018";
+            e.layer.closePopup();
+
             tracksLayer2018.getLayer(selectedId).setStyle({color: process.env.REACT_APP_TRACK_2018_HIGHLIGHT, weight: 4}).bringToFront();
         });
 
@@ -210,6 +235,12 @@ class Map extends React.Component {
                     layer.setStyle({color: process.env.REACT_APP_TRACK_2017_DEEMPHASIZE, weight: 2});
                 }
             });
+
+            // Set popup content
+            let popupContainer = document.getElementById("static-popup");
+            popupContainer.innerHTML = e.layer._popup._content;
+            popupContainer.className = "popup-2017";
+            e.layer.closePopup();
 
             tracksLayer2017.getLayer(selectedId).setStyle({color: process.env.REACT_APP_TRACK_2017_HIGHLIGHT, weight: 4}).bringToFront();
         });
@@ -226,6 +257,12 @@ class Map extends React.Component {
                 }
             });
 
+            // Set popup content
+            let popupContainer = document.getElementById("static-popup");
+            popupContainer.innerHTML = e.layer._popup._content;
+            popupContainer.className = "popup-2016";
+            e.layer.closePopup();
+
             tracksLayer2016.getLayer(selectedId).setStyle({color: process.env.REACT_APP_TRACK_2016_HIGHLIGHT, weight: 4}).bringToFront();
         });
 
@@ -241,6 +278,12 @@ class Map extends React.Component {
                 }
             });
 
+            // Set popup content
+            let popupContainer = document.getElementById("static-popup");
+            popupContainer.innerHTML = e.layer._popup._content;
+            popupContainer.className = "popup-2015";
+            e.layer.closePopup();
+
             tracksLayer2015.getLayer(selectedId).setStyle({color: process.env.REACT_APP_TRACK_2015_HIGHLIGHT, weight: 4}).bringToFront();
         });
 
@@ -248,9 +291,9 @@ class Map extends React.Component {
 
         Modal.setAppElement('body');
 
-        L.control.zoom({
-            position: 'topright'
-        }).addTo(this.map);
+        // L.control.zoom({
+        //     position: 'topright'
+        // }).addTo(this.map);
     }
 
     componentDidUpdate(prevProps) {
@@ -555,7 +598,14 @@ class Map extends React.Component {
 
                 console.log("2021 Track Total: " + tracks2021.length);
 
-                let totalMiles2021 = 0; 
+                let totalMiles2021 = 0;
+                let totalRides = tracks2021.length;
+                let longestRide = {
+                    "distance": 0
+                }
+                let shortestRide = {
+                    "distance": 1000
+                }
 
                 for (const track of tracks2021) {
                     if (track.type === "Ride") {
@@ -593,6 +643,14 @@ class Map extends React.Component {
                             max_heartrate: track.max_heartrate,
                             average_heartrate: track.average_heartrate
                         };
+
+                        if (distance > longestRide.distance) {
+                            longestRide.distance = distance;
+                        }
+
+                        if (distance < shortestRide.distance) {
+                            shortestRide.distance = distance;
+                        }
 
                         const popupText = popupStyle(track);
                         newLine.bindPopup(popupText);

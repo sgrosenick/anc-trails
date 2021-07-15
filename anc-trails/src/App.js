@@ -1,11 +1,12 @@
 import React from 'react';
 import Map from './Map/Map';
-import Controls from './Controls/Control';
+import CustomAccordion from './Controls/Accordion';
  
 function App() {
   return (
     <div className="map-container">
-      <Controls />
+      <CustomAccordion />
+      <div id="static-popup" className="popup-empty"></div>
       <Map />
     </div>
   );
