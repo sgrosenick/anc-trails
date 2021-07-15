@@ -33,6 +33,91 @@ body {
   font-family: 'Rubik', sans-serif;
 }
 
+.ReactModal__Overlay {
+  z-index: 999;
+  background-color: rgba(255, 255, 255, 0.45) !important;
+}
+
+.ReactModal__Content {
+  background-color: #34495e !important;
+  border: none !important;
+}
+
+// input animations
+
+#login-container {
+  background-color: #34495e;
+}
+
+#sign-in-btn {
+  margin-top: 24px;
+  width: 100%;
+  height: 32px;
+  border-radius: 8px;
+  border: none;
+}
+
+h1 {
+  margin-bottom: 80px;
+}
+
+.login-input {
+  width: 100%; 
+  position: relative;
+  height: 50px;
+  overflow: hidden;
+}
+
+.login-input input {
+  width: 100%;
+  height: 100%;
+  color: #595f6e;
+  padding-top: 20px;
+  border: none;
+  outline: none;
+  background-color: #34495e;
+}
+
+.login-input label {
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  border-bottom: 1px solid black;
+}
+
+.login-input label::after {
+  content: "";
+  position: absolute;
+  left: 0px;
+  bottom: -1px;
+  height: 100%;
+  width: 100%;
+  border-bottom: 3px solid #5fa8d3;
+  transform: translateX(-100%);
+  transition: all 0.3s ease;
+}
+
+.content-name {
+  position: absolute;
+  bottom: 5px;
+  left: 0px;
+  transition: all 0.3s ease;
+}
+
+.login-input input:focus + .label-name .content-name, 
+.login-input input:valid + .label-name .content-name {
+  transform: translateY(-150%);
+  font-size: 14px;
+  color: #5fa8d3;
+}
+
+.login-input input:focus + .label-name::after,
+.login-input input:valid + .label-name::after {
+  transform: translateX(0%); 
+=======
 #static-popup {
   height: 100px;
   width: 300px;
