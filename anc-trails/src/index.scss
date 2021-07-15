@@ -117,7 +117,8 @@ h1 {
 .login-input input:focus + .label-name::after,
 .login-input input:valid + .label-name::after {
   transform: translateX(0%); 
-=======
+}
+
 #static-popup {
   height: 100px;
   width: 300px;
