@@ -30,7 +30,7 @@ const modalStyles = {
     },
 };
 
-let isModalOpen = false;
+//let isModalOpen = true;
 
 const Stadia_AlidadeSmoothDark = L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png', {
         maxZoom: 20,
@@ -58,6 +58,16 @@ const mapParams = {
 }
 
 class Map extends React.Component {
+
+    constructor(props) {
+        super();
+        this.state = {
+            modalIsOpen: true
+        }
+
+        this.handleCloseModal = this.closeModal.bind(this);
+    }
+
     static propTypes = {
         lastCompute: PropTypes.number,
         dbscanSettings: PropTypes.object,
@@ -68,12 +78,8 @@ class Map extends React.Component {
         accessToken: PropTypes.string
     }
 
-    afterOpenModal() {
-        
-    }
-
     closeModal() {
-
+        this.setState({ modalIsOpen: false });
     }
 
     componentDidMount() {
@@ -240,20 +246,28 @@ class Map extends React.Component {
 
         //dispatch(getAccessToken());
 
+        Modal.setAppElement('body');
+
         L.control.zoom({
             position: 'topright'
         }).addTo(this.map);
-
-        setTimeout( () => { isModalOpen = true; }, 2000 );
     }
 
     componentDidUpdate(prevProps) {
-        const { accessToken, dispatch, tracks, streets, analysisRunning, tracks2021, tracks2019, tracks2018, tracks2017, tracks2016, tracks2015,
+        const { accessToken, dispatch, user, isLoggedIn, tracks, streets, analysisRunning, tracks2021, tracks2019, tracks2018, tracks2017, tracks2016, tracks2015,
             streetsLoaded, tracksUploading, tracksLoaded2021, tracksLoaded2020, tracksLoaded2019, tracksLoaded2018, tracksLoaded2017, tracksLoaded2016, tracksLoaded2015,
             show2021Tracks, show2020Tracks, show2019Tracks, show2018Tracks, show2017Tracks, show2016Tracks, show2015Tracks } = this.props;
 
-        // STREETS LOADED
+        // LOGGED IN
+        if (accessToken == "" && isLoggedIn) {
+            dispatch(getAccessToken(user));
+        }
 
+        if (accessToken !== "" && isLoggedIn && this.state.modalIsOpen) {
+            this.closeModal();
+        }
+        
+        // STREETS LOADED
         if (streetsLoaded === true) {
             this.addStreets();
         }
@@ -263,31 +277,38 @@ class Map extends React.Component {
         }
 
         // TRACKS LOADED
-        if (accessToken !== "" && tracksLoaded2021 === false) {
+        if (accessToken !== "" && tracksLoaded2021 === false && this.state.modalIsOpen == false) {
+            console.log("loading 2021");
             dispatch(getActivities({token: accessToken, year: 2021}))
         }
 
-        if (accessToken !== "" && tracksLoaded2021 === true && tracksLoaded2020 === false) {
+        if (accessToken !== "" && tracksLoaded2021 === true && tracksLoaded2020 === false && this.state.modalIsOpen == false) {
+            console.log("loading 2020");
             dispatch(getActivities({token: accessToken, year: 2020}))
         }
 
-        if (accessToken !== "" && tracksLoaded2020 === true && tracksLoaded2019 === false) {
+        if (accessToken !== "" && tracksLoaded2020 === true && tracksLoaded2019 === false && this.state.modalIsOpen == false) {
+            console.log("loading 2019");
             dispatch(getActivities({token: accessToken, year: 2019}))
         }
 
-        if (accessToken !== "" && tracksLoaded2019 === true && tracksLoaded2018 === false) {
+        if (accessToken !== "" && tracksLoaded2019 === true && tracksLoaded2018 === false && this.state.modalIsOpen == false) {
+            console.log("loading 2018");
             dispatch(getActivities({token: accessToken, year: 2018}))
         }
 
-        if (accessToken !== "" && tracksLoaded2018 === true && tracksLoaded2017 === false) {
+        if (accessToken !== "" && tracksLoaded2018 === true && tracksLoaded2017 === false && this.state.modalIsOpen == false) {
+            console.log("loading 2017");
             dispatch(getActivities({token: accessToken, year: 2017}))
         }
 
-        if (accessToken !== "" && tracksLoaded2017 === true && tracksLoaded2016 === false) {
+        if (accessToken !== "" && tracksLoaded2017 === true && tracksLoaded2016 === false && this.state.modalIsOpen == false) {
+            console.log("loading 2016");
             dispatch(getActivities({token: accessToken, year: 2016}))
         }
 
-        if (accessToken !== "" && tracksLoaded2016 === true && tracksLoaded2015 === false) {
+        if (accessToken !== "" && tracksLoaded2016 === true && tracksLoaded2015 === false && this.state.modalIsOpen == false) {
+            console.log("loading 2015");
             dispatch(getActivities({token: accessToken, year: 2015}))
         }
 
@@ -955,7 +976,7 @@ class Map extends React.Component {
         return (
         <div style={style}>
             <Modal
-                isOpen={true}
+                isOpen={this.state.modalIsOpen}
                 onAfterClose={this.afterOpenModal}
                 style={modalStyles}>
                 <LoginForm />
@@ -969,7 +990,7 @@ class Map extends React.Component {
 const mapStateToProps = state => {
     const { accessToken, tracks, analysisRunning, streets, tracks2021, tracks2019, tracks2018, tracks2017, tracks2016, tracks2015,
         streetsLoaded, tracksUploading, tracksLoaded2021, tracksLoaded2020, tracksLoaded2019, tracksLoaded2018, tracksLoaded2017, tracksLoaded2016, tracksLoaded2015,
-        show2021Tracks, show2020Tracks, show2019Tracks, show2018Tracks, show2017Tracks, show2016Tracks, show2015Tracks } = state.tracksReducer;
+        show2021Tracks, show2020Tracks, show2019Tracks, show2018Tracks, show2017Tracks, show2016Tracks, show2015Tracks, user, isLoggedIn } = state.tracksReducer;
     return {
         accessToken,
         tracks,
@@ -996,7 +1017,9 @@ const mapStateToProps = state => {
         show2018Tracks,
         show2017Tracks,
         show2016Tracks,
-        show2015Tracks
+        show2015Tracks,
+        user,
+        isLoggedIn
     }
 }
 

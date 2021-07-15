@@ -13,6 +13,9 @@ export const SHOW_2017_TRACKS = 'SHOW_2017_TRACKS';
 export const SHOW_2016_TRACKS = 'SHOW_2016_TRACKS';
 export const SHOW_2015_TRACKS = 'SHOW_2015_TRACKS';
 
+export const LOGIN = 'LOGIN';
+export const REGISTER = 'REGISTER';
+
 export const getActivities = payload => (dispatch) => {
 
   const url2021 = new URL('https://www.strava.com/api/v3/athlete/activities?after=1609545600&per_page=200&access_token=');
@@ -83,9 +86,31 @@ export const uploadTracks = (tracks) => (dispatch) => {
   .catch(error => console.log(error));
 }
 
-export const getAccessToken = () => (dispatch) => {
+export const startLogin = (user) => (dispatch) => {
+    dispatch(login(user))
+};
 
+export const login = (user) => (dispatch) => {
+  const url = new URL('https://anc-trails.herokuapp.com/api/users/login');
+
+  return fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json;charset=utf-8'
+    },
+    body: JSON.stringify(user)
+  })
+  .then(res => res.json())
+  .then(data => dispatch(handleLogin(data)))
+  .catch(err => {
+    console.log(err)
+  });
+}
+
+export const getAccessToken = (user) => (dispatch) => {
   const authLink = new URL("https://www.strava.com/oauth/token");
+
+  let { strava_id, strava_key, strava_refresh } = user;
 
   return fetch(authLink, {
       method: 'post',
@@ -94,9 +119,9 @@ export const getAccessToken = () => (dispatch) => {
           'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-          client_id: process.env.REACT_APP_CLIENT_ID,
-          client_secret: process.env.REACT_APP_CLIENT_SECRET,
-          refresh_token: process.env.REACT_APP_REFRESH_TOKEN,
+          client_id: strava_id,
+          client_secret: strava_key,
+          refresh_token: strava_refresh,
           grant_type: 'refresh_token'
       })
   }).then(res => res.json())
@@ -206,4 +231,9 @@ export const toggle2016Tracks = toggle => ({
 export const toggle2015Tracks = toggle => ({
   type: SHOW_2015_TRACKS,
   payload: toggle
+});
+
+export const handleLogin = user => ({
+  type: LOGIN,
+  payload: user
 });
