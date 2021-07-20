@@ -1,5 +1,6 @@
 @import '~leaflet/dist/leaflet.css';
 @import '~tachyons/css/tachyons.css';
+@import './style/theme.scss';
 
 body {
   margin: 0;
@@ -11,21 +12,24 @@ body {
   margin: 12px;
   z-index: 999;
   width: 300px;
-  height: calc(100vh - 40px);
+  //height: calc(100vh - 40px);
   max-height: 600px;
   //padding: 20px;
-  background-color: #34495e;
+  //background-color: #34495e;
+  background-color: $grey-800;
   font-family: 'Rubik', sans-serif;
   border-radius: 8px;
 
   h3 {
     text-align: center;
+    color: $green-100;
   }
 }
 
 
 .layer-controls {
-  background-color: #34495e;
+  //background-color: #34495e;
+  background-color: $light-blue-900;
   padding-left: 12px;
 }
 
