@@ -1,5 +1,6 @@
 @import '~leaflet/dist/leaflet.css';
 @import '~tachyons/css/tachyons.css';
+@import './style/theme.scss';
 
 body {
   margin: 0;
@@ -11,26 +12,26 @@ body {
   margin: 12px;
   z-index: 999;
   width: 300px;
-  height: calc(100vh - 40px);
   max-height: 600px;
-  //padding: 20px;
-  background-color: #34495e;
-  font-family: 'Rubik', sans-serif;
+  background-color: $blue-grey-800;
+  font-family: 'Poppins';
   border-radius: 8px;
+  overflow: auto;
 
   h3 {
     text-align: center;
+    color: $cyan-400;
   }
 }
 
-
+s
 .layer-controls {
-  background-color: #34495e;
+  background-color: $blue-grey-800;
   padding-left: 12px;
 }
 
 .MuiTypography-body1{
-  font-family: 'Rubik', sans-serif;
+  font-family: 'Poppins';
 }
 
 .ReactModal__Overlay {
@@ -39,26 +40,42 @@ body {
 }
 
 .ReactModal__Content {
-  background-color: #34495e !important;
+  background-color: $blue-grey-600 !important;
   border: none !important;
 }
 
 // input animations
-
 #login-container {
-  background-color: #34495e;
+  background-color: $blue-grey-600;
+  color: white;
+  font-family: 'Poppins';
+
+  h2 {
+    margin-bottom: px;
+  }
 }
 
 #sign-in-btn {
-  margin-top: 24px;
+  margin-top: 48px;
   width: 100%;
   height: 32px;
   border-radius: 8px;
   border: none;
+  background-color: $cyan-400;
+  color: $cyan-900;
+}
+
+#sign-in-btn:active {
+  background-color: $cyan-600;
+  transform: translateY(4px);
 }
 
 h1 {
   margin-bottom: 80px;
+}
+
+#password-input {
+  margin-top: 16px;
 }
 
 .login-input {
@@ -71,11 +88,11 @@ h1 {
 .login-input input {
   width: 100%;
   height: 100%;
-  color: #595f6e;
+  color: white;
   padding-top: 20px;
   border: none;
   outline: none;
-  background-color: #34495e;
+  background-color: $blue-grey-600;
 }
 
 .login-input label {
@@ -85,7 +102,7 @@ h1 {
   width: 100%;
   height: 100%;
   pointer-events: none;
-  border-bottom: 1px solid black;
+  border-bottom: 1px solid white;
 }
 
 .login-input label::after {
@@ -95,7 +112,7 @@ h1 {
   bottom: -1px;
   height: 100%;
   width: 100%;
-  border-bottom: 3px solid #5fa8d3;
+  border-bottom: 3px solid $cyan-200;
   transform: translateX(-100%);
   transition: all 0.3s ease;
 }
@@ -111,7 +128,7 @@ h1 {
 .login-input input:valid + .label-name .content-name {
   transform: translateY(-150%);
   font-size: 14px;
-  color: #5fa8d3;
+  color: $cyan-200
 }
 
 .login-input input:focus + .label-name::after,
@@ -134,11 +151,11 @@ h1 {
 }
 
 .popup-2021 {
-  border-left: 7px solid #FC427B;
+  border-left: 7px solid #26de81
 }
 
 .popup-2020 {
-  border-left: 7px solid #26de81;
+  border-left: 7px solid #FC427B
 }
 
 .popup-2019 {
