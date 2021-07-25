@@ -43,7 +43,7 @@ class LoginForm extends Component {
     render() {
         return (
             <div id="login-container">
-                <h3>Sign In</h3>
+                <h2>Sign In</h2>
                 <form className="form" onSubmit={this.onSubmit}>
                     <div className="login-input">
                         <input type='text' name='username' autoComplete='off' onChange={this.onChange} required/>
@@ -52,14 +52,14 @@ class LoginForm extends Component {
                         </label>
                     </div>
 
-                    <div className="login-input">
-                        <input type='text' name='password' autoComplete='off' onChange={this.onChange} required/>
+                    <div id="password-input" className="login-input">
+                        <input type='password' name='password' autoComplete='off' onChange={this.onChange} required/>
                         <label htmlFor='password' className='label-name'>
                             <span className='content-name' >Password</span>
                         </label>
                     </div>
 
-                    <button id="sign-in-btn" type="submit">Sign In</button>
+                    <button id="sign-in-btn" type="submit">Submit</button>
                 </form>
             </div>
         )
