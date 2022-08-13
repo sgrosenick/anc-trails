@@ -36,6 +36,7 @@ const Stadia_AlidadeSmoothDark = L.tileLayer('https://tiles.stadiamaps.com/tiles
         attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a>, &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors'
         });
 
+const tracksLayer2022 = L.featureGroup();        
 const tracksLayer2021 = L.featureGroup();
 const tracksLayer2020 = L.featureGroup();
 const tracksLayer2019 = L.featureGroup();
@@ -53,7 +54,7 @@ const mapParams = {
     center: [61.16, -150.0],
     zoomControl: false,
     zoom: 11.49,
-    layers: [tracksLayer2021, tracksLayer2020, tracksLayer2019, tracksLayer2018, tracksLayer2017, tracksLayer2016, tracksLayer2015, streetsLayer, riddenStreets, Stadia_AlidadeSmoothDark]
+    layers: [tracksLayer2022, tracksLayer2021, tracksLayer2020, tracksLayer2019, tracksLayer2018, tracksLayer2017, tracksLayer2016, tracksLayer2015, streetsLayer, riddenStreets, Stadia_AlidadeSmoothDark]
 }
 
 class Map extends React.Component {
@@ -86,9 +87,10 @@ class Map extends React.Component {
 
         this.map = L.map('map', mapParams);
 
-        let allLayers = [tracksLayer2021, tracksLayer2020, tracksLayer2019, tracksLayer2018, tracksLayer2017, tracksLayer2016, tracksLayer2015];
+        let allLayers = [tracksLayer2022, tracksLayer2021, tracksLayer2020, tracksLayer2019, tracksLayer2018, tracksLayer2017, tracksLayer2016, tracksLayer2015];
 
         this.map.on('click', function(e) {
+            tracksLayer2022.setStyle({color: process.env.REACT_APP_TRACK_2022_COLOR, weight: 2});
             tracksLayer2021.setStyle({color: process.env.REACT_APP_TRACK_2021_COLOR, weight: 2});
             tracksLayer2020.setStyle({color: process.env.REACT_APP_TRACK_2020_COLOR, weight: 2});
             tracksLayer2019.setStyle({color: process.env.REACT_APP_TRACK_2019_COLOR, weight: 2});
@@ -109,6 +111,9 @@ class Map extends React.Component {
                         let newColor; 
                         
                         switch(lyr.options.color) {
+                            case process.env.REACT_APP_TRACK_2022_COLOR:
+                                newColor = process.env.REACT_APP_TRACK_2022_DEEMPHASIZE;
+                                break;
                             case process.env.REACT_APP_TRACK_2021_COLOR:
                                 newColor = process.env.REACT_APP_TRACK_2021_DEEMPHASIZE;
                                 break;
@@ -140,6 +145,26 @@ class Map extends React.Component {
                 }
             });
         };
+        tracksLayer2022.on('click', function(e) {
+            deemphasizeLayers();
+            const selectedId = e.layer._leaflet_id;
+
+            tracksLayer2022.eachLayer(function(layer) {
+                layer.setStyle({color: process.env.REACT_APP_TRACK_2022_COLOR, weight: 2});
+
+                if (layer._leaflet_id != selectedId) {
+                    layer.setStyle({color: process.env.REACT_APP_TRACK_2022_DEEMPHASIZE, weight: 2});
+                }
+            });
+
+            // Set popup content
+            let popupContainer = document.getElementById("static-popup");
+            popupContainer.innerHTML = e.layer._popup._content;
+            popupContainer.className = "popup-2022";
+            e.layer.closePopup();
+
+            tracksLayer2022.getLayer(selectedId).setStyle({color: process.env.REACT_APP_TRACK_2022_HIGHLIGHT, weight: 4}).bringToFront();
+        });
 
         tracksLayer2021.on('click', function(e) {
             deemphasizeLayers();
@@ -297,9 +322,9 @@ class Map extends React.Component {
     }
 
     componentDidUpdate(prevProps) {
-        const { accessToken, dispatch, user, isLoggedIn, tracks, streets, analysisRunning, tracks2021, tracks2019, tracks2018, tracks2017, tracks2016, tracks2015,
-            streetsLoaded, tracksUploading, tracksLoaded2021, tracksLoaded2020, tracksLoaded2019, tracksLoaded2018, tracksLoaded2017, tracksLoaded2016, tracksLoaded2015,
-            show2021Tracks, show2020Tracks, show2019Tracks, show2018Tracks, show2017Tracks, show2016Tracks, show2015Tracks } = this.props;
+        const { accessToken, dispatch, user, isLoggedIn, tracks, streets, analysisRunning, tracks2022, tracks2021, tracks2019, tracks2018, tracks2017, tracks2016, tracks2015,
+            streetsLoaded, tracksUploading, tracksLoaded2022, tracksLoaded2021, tracksLoaded2020, tracksLoaded2019, tracksLoaded2018, tracksLoaded2017, tracksLoaded2016, tracksLoaded2015,
+            show2022Tracks, show2021Tracks, show2020Tracks, show2019Tracks, show2018Tracks, show2017Tracks, show2016Tracks, show2015Tracks } = this.props;
 
         // LOGGED IN
         if (accessToken == "" && isLoggedIn) {
@@ -320,7 +345,12 @@ class Map extends React.Component {
         }
 
         // TRACKS LOADED
-        if (accessToken !== "" && tracksLoaded2021 === false && this.state.modalIsOpen == false) {
+        if (accessToken !== "" && tracksLoaded2022 === false && this.state.modalIsOpen == false) {
+            console.log("loading 2022");
+            dispatch(getActivities({token: accessToken, year: 2022}))
+        }
+
+        if (accessToken !== "" && tracksLoaded2022 === true && tracksLoaded2021 === false && this.state.modalIsOpen == false) {
             console.log("loading 2021");
             dispatch(getActivities({token: accessToken, year: 2021}))
         }
@@ -362,6 +392,10 @@ class Map extends React.Component {
         }
 
         // ADD TRACKS
+        if (tracksLoaded2022 === true && tracks2022 !== prevProps.tracks2022) {
+            this.addTracks(2022);
+        }
+
         if (tracksLoaded2021 === true && tracks2021 !== prevProps.tracks2021) {
             this.addTracks(2021);
         }
@@ -391,6 +425,12 @@ class Map extends React.Component {
         }
 
         // SHOW TRACKS
+        if (show2022Tracks === false) {
+            this.map.removeLayer(tracksLayer2022);
+        } else {
+            this.map.addLayer(tracksLayer2022);
+        }
+
         if (show2021Tracks === false) {
             this.map.removeLayer(tracksLayer2021);
         } else {
@@ -591,6 +631,61 @@ class Map extends React.Component {
     addTracks(year) {
 
         switch(year) {
+            case 2022:
+                tracksLayer2022.clearLayers();
+
+                const { tracks2022 } = this.props;
+
+                console.log("2022 Track Total: " + tracks2022.length);
+
+                let totalMiles2022 = 0;
+
+                for (const track of tracks2022) {
+                    if (track.type === "Ride") {
+                        const coords = L.Polyline.fromEncoded(track.map.summary_polyline).getLatLngs();
+                        const newLine = L.polyline(
+                            coords,
+                            {
+                                color: process.env.REACT_APP_TRACK_2022_COLOR,
+                                weight: 2
+                            }
+                        );
+
+                        var style = {
+                            "color": process.env.REACT_APP_TRACK_2022_COLOR,
+                            "weight": 2
+                        };
+                        
+                        const distance = track.distance / 1609.344;
+                        const roundDistance = Math.round(distance * 100) / 100;
+                        totalMiles2022 += roundDistance;
+
+                        const convertToGeojson = newLine.toGeoJSON();
+                        convertToGeojson.properties = {
+                            average_speed: track.average_speed,
+                            max_speed: track.max_speed,
+                            name: track.name,
+                            distance: track.distance,
+                            moving_time: track.moving_time,
+                            start_date_local: track.start_date_local,
+                            total_elevation_gain: track.total_elevation_gain,
+                            type: track.type,
+                            year: 2022,
+                            achievement_count: track.achievement_count,
+                            pr_count: track.pr_count,
+                            max_heartrate: track.max_heartrate,
+                            average_heartrate: track.average_heartrate
+                        };
+
+                        const popupText = popupStyle(track);
+                        newLine.bindPopup(popupText);
+                        newLine.addTo(tracksLayer2022);
+                    }
+                }
+
+                console.log("2022 Miles: " + totalMiles2022);
+
+                break;
             case 2021:
                 tracksLayer2021.clearLayers();
 
@@ -1046,14 +1141,15 @@ class Map extends React.Component {
 }
 
 const mapStateToProps = state => {
-    const { accessToken, tracks, analysisRunning, streets, tracks2021, tracks2019, tracks2018, tracks2017, tracks2016, tracks2015,
-        streetsLoaded, tracksUploading, tracksLoaded2021, tracksLoaded2020, tracksLoaded2019, tracksLoaded2018, tracksLoaded2017, tracksLoaded2016, tracksLoaded2015,
-        show2021Tracks, show2020Tracks, show2019Tracks, show2018Tracks, show2017Tracks, show2016Tracks, show2015Tracks, user, isLoggedIn } = state.tracksReducer;
+    const { accessToken, tracks, analysisRunning, streets, tracks2022, tracks2021, tracks2019, tracks2018, tracks2017, tracks2016, tracks2015,
+        streetsLoaded, tracksUploading, tracksLoaded2022, tracksLoaded2021, tracksLoaded2020, tracksLoaded2019, tracksLoaded2018, tracksLoaded2017, tracksLoaded2016, tracksLoaded2015,
+        show2022Tracks, show2021Tracks, show2020Tracks, show2019Tracks, show2018Tracks, show2017Tracks, show2016Tracks, show2015Tracks, user, isLoggedIn } = state.tracksReducer;
     return {
         accessToken,
         tracks,
         streets,
         analysisRunning,
+        tracks2022,
         tracks2021,
         tracks2019,
         tracks2018,
@@ -1062,6 +1158,7 @@ const mapStateToProps = state => {
         tracks2015,
         streetsLoaded,
         tracksUploading,
+        tracksLoaded2022,
         tracksLoaded2021,
         tracksLoaded2020,
         tracksLoaded2019,
@@ -1069,6 +1166,7 @@ const mapStateToProps = state => {
         tracksLoaded2017,
         tracksLoaded2016,
         tracksLoaded2015,
+        show2022Tracks,
         show2021Tracks,
         show2020Tracks,
         show2019Tracks,

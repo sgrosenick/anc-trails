@@ -1,6 +1,19 @@
 import { withStyles } from '@material-ui/core/styles'; 
 import { Switch } from '@material-ui/core';
 
+export const Track2022Switch = withStyles({
+    switchBase: {
+        '&$checked': {
+            color: process.env.REACT_APP_TRACK_2022_COLOR
+        },
+        '&$checked + $track': {
+            backgroundColor: process.env.REACT_APP_TRACK_2022_COLOR
+        },
+    },
+    checked: {},
+    track: {}
+})(Switch);
+
 export const Track2021Switch = withStyles({
     switchBase: {
         '&$checked': {

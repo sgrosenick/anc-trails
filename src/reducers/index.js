@@ -1,5 +1,5 @@
 import { combineReducers } from 'redux';
-import { LOAD_STREETS, RUN_ANALYSIS, TRACKS_UPLOADING, UPLOAD_TRACKS, LOAD_TRACKS, GET_TOKEN, SHOW_2021_TRACKS, SHOW_2020_TRACKS, SHOW_2019_TRACKS, SHOW_2018_TRACKS, SHOW_2017_TRACKS, SHOW_2016_TRACKS, SHOW_2015_TRACKS, LOGIN } from '../actions/actions';
+import { LOAD_STREETS, RUN_ANALYSIS, TRACKS_UPLOADING, UPLOAD_TRACKS, LOAD_TRACKS, GET_TOKEN, SHOW_2022_TRACKS, SHOW_2021_TRACKS, SHOW_2020_TRACKS, SHOW_2019_TRACKS, SHOW_2018_TRACKS, SHOW_2017_TRACKS, SHOW_2016_TRACKS, SHOW_2015_TRACKS, LOGIN } from '../actions/actions';
 
 const initalTracksState = {
     accessToken: "",
@@ -9,6 +9,7 @@ const initalTracksState = {
     tracks: [],
     uploadedTracks: [],
     tracksUploading: false,
+    tracks2022: [],
     tracks2021: [],
     tracks2019: [],
     tracks2018: [],
@@ -17,6 +18,7 @@ const initalTracksState = {
     tracks2015: [],
     streetsLoaded: false,
     analysisRunning: false,
+    tracksLoaded2022: false,
     tracksLoaded2021: false,
     tracksLoaded2020: false,
     tracksLoaded2019: false,
@@ -24,7 +26,8 @@ const initalTracksState = {
     tracksLoaded2017: false,
     tracksLoaded2016: false,
     tracksLoaded2015: false,
-    show2021Tracks: true,
+    show2022Tracks: true,
+    show2021Tracks: false,
     show2020Tracks: false,
     show2019Tracks: false,
     show2018Tracks: false,
@@ -37,6 +40,12 @@ const tracksReducer = (state = initalTracksState, action) => {
     switch(action.type) {
         case LOAD_TRACKS:
             switch(action.payload.year) {
+                case 2022:
+                    return {
+                        ...state,
+                        tracks2022: action.payload.tracks,
+                        tracksLoaded2022: true
+                    }
                 case 2021:
                     return {
                         ...state,
@@ -113,6 +122,11 @@ const tracksReducer = (state = initalTracksState, action) => {
                 user: action.payload,
                 isLoggedIn: true
             });
+        case SHOW_2022_TRACKS:
+            return {
+                ...state,
+                show2022Tracks: !action.payload.show2022Tracks
+            }
         case SHOW_2021_TRACKS:
             return {
                 ...state,
