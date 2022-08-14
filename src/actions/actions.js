@@ -5,6 +5,7 @@ export const TRACKS_UPLOADING = 'TRACKS_UPLOADING';
 export const UPLOAD_TRACKS = 'UPLOAD_TRACKS';
 export const LOAD_TRACKS = 'LOAD_TRACKS';
 export const GET_TOKEN = 'GET_TOKEN';
+export const SHOW_2022_TRACKS = 'SHOW_2022_TRACKS';
 export const SHOW_2021_TRACKS = 'SHOW_2021_TRACKS';
 export const SHOW_2020_TRACKS = 'REMOVE_2020_TRACKS';
 export const SHOW_2019_TRACKS = 'SHOW_2019_TRACKS';
@@ -18,7 +19,8 @@ export const REGISTER = 'REGISTER';
 
 export const getActivities = payload => (dispatch) => {
 
-  const url2021 = new URL('https://www.strava.com/api/v3/athlete/activities?after=1609545600&per_page=200&access_token=');
+  const url2022 = new URL('https://www.strava.com/api/v3/athlete/activities?after=1640995260&per_page=200&access_token=');
+  const url2021 = new URL('https://www.strava.com/api/v3/athlete/activities?before=1640995140&after=1609459260&per_page=200&access_token=');
   const url2020 = new URL('https://www.strava.com/api/v3/athlete/activities?before=1609545600&after=1577836800&per_page=200&access_token=');
   const url2019 = new URL('https://www.strava.com/api/v3/athlete/activities?before=1577750400&after=1546300800&per_page=200&access_token=');
   const url2018 = new URL('https://www.strava.com/api/v3/athlete/activities?before=1546214400&after=1514764800&per_page=200&access_token=');
@@ -29,6 +31,9 @@ export const getActivities = payload => (dispatch) => {
   var url = new URL('https://www.strava.com/api/v3/athlete/activities?after=1577836800&per_page=200&access_token=');
 
   switch(payload.year) {
+    case 2022:
+      url = url2022 + payload.token;
+      break;
     case 2021:
       url = url2021 + payload.token;
       break;
@@ -197,6 +202,11 @@ export const getToken = token =>({
   type: GET_TOKEN,
   payload: token
 })
+
+export const toggle2022Tracks = toggle => ({
+  type: SHOW_2022_TRACKS,
+  payload: toggle
+});
 
 export const toggle2021Tracks = toggle => ({
   type: SHOW_2021_TRACKS,

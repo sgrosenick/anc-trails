@@ -32,6 +32,7 @@ s
 
 .MuiTypography-body1{
   font-family: 'Poppins';
+  color: whitesmoke;
 }
 
 .ReactModal__Overlay {
@@ -148,6 +149,10 @@ h1 {
   font-family: 'Rubik', sans-serif;
   border-radius: 8px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.popup-2022 {
+  border-left: 7px solid #e74c3c
 }
 
 .popup-2021 {
